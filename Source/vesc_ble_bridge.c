@@ -1,7 +1,5 @@
 /**
- * This firmware implements a simple BLE-UART bridge for VESC devices
- * 
- * Based on TI CC2540 BLE Stack
+ * CC2540 VESC BLE UART Bridge Firmware
  * UART Configuration: 115200 baud, 8N1
  */
 
@@ -21,6 +19,7 @@
 #include "peripheral.h"
 #include "gapbondmgr.h"
 #include "vesc_ble_bridge.h"
+#include "vesc_service.h"
 
 /*********************************************************************
  * CONSTANTS
@@ -33,9 +32,9 @@
 #define VESC_UART_BAUD                HAL_UART_BR_115200
 #define VESC_UART_PORT                HAL_UART_PORT_0
 
-// BLE Connection parameters
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL     8     // 10ms (units of 1.25ms)
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL     16    // 20ms (units of 1.25ms)
+// BLE Connection parameters - optimized for VESC
+#define DEFAULT_DESIRED_MIN_CONN_INTERVAL     6     // 7.5ms (units of 1.25ms)
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL     12    // 15ms (units of 1.25ms)
 #define DEFAULT_DESIRED_SLAVE_LATENCY         0
 #define DEFAULT_DESIRED_CONN_TIMEOUT          200   // 2s (units of 10ms)
 
@@ -51,13 +50,20 @@
 #define UART_RX_BUFFER_SIZE                   512
 #define UART_TX_BUFFER_SIZE                   512
 
-// BLE MTU size (max characteristic value size)
-#define BLE_MTU_SIZE                          244
+// BLE MTU size (default for CC2540)
+#define BLE_MTU_SIZE                          20
 
 // Task events
 #define VESC_UART_RX_EVT                      0x0001
 #define VESC_UART_TX_EVT                      0x0002
 #define VESC_START_DEVICE_EVT                 0x0004
+#define VESC_PERIODIC_EVT                     0x0008
+
+// Periodic event period (ms)
+#define VESC_PERIODIC_EVT_PERIOD              50
+
+// Maximum retry attempts for BLE notifications
+#define MAX_NOTIFICATION_RETRIES              3
 
 /*********************************************************************
  * TYPEDEFS
@@ -77,9 +83,9 @@ uint8 vescBLE_TaskID;
 // GAP - SCAN RSP data (max size = 31 bytes)
 static uint8 scanRspData[] =
 {
-  0x0B,   // length of this data
+  0x09,   // length of this data
   GAP_ADTYPE_LOCAL_NAME_COMPLETE,
-  'V', 'E', 'S', 'C', ' ', 'B', 'L', 'E', ' ', // Device name
+  'V', 'E', 'S', 'C', ' ', 'B', 'L', 'E',  // Device name
   
   // Connection interval range
   0x05,   // length of this data
@@ -103,22 +109,26 @@ static uint8 advertData[] =
   GAP_ADTYPE_FLAGS,
   GAP_ADTYPE_FLAGS_GENERAL | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
   
-  // Service UUID
-  0x03,   // length of this data
-  GAP_ADTYPE_16BIT_MORE,
-  LO_UINT16(VESC_SERVICE_UUID),
-  HI_UINT16(VESC_SERVICE_UUID)
+  // 128-bit Service UUID - Nordic UART Service
+  0x11,   // length of this data (16 bytes + 1 byte type)
+  GAP_ADTYPE_128BIT_COMPLETE,
+  0x9E, 0xCA, 0xDC, 0x24, 0x0E, 0xE5, 0xA9, 0xE0,
+  0x93, 0xF3, 0xA3, 0xB5, 0x01, 0x00, 0x40, 0x6E
 };
 
 // GAP GATT Attributes
 static uint8 attDeviceName[GAP_DEVICE_NAME_LEN] = DEVICE_NAME;
 
-// UART buffers - removed, using HAL UART buffers directly
 // Connection handle
 static uint16 gapConnHandle = INVALID_CONNHANDLE;
 
 // BLE notification enabled flag
 static uint8 notificationsEnabled = FALSE;
+
+// Pending notification buffer (for retry logic)
+static uint8 pendingNotification[BLE_MTU_SIZE];
+static uint16 pendingNotificationLen = 0;
+static uint8 notificationRetries = 0;
 
 /*********************************************************************
  * LOCAL FUNCTIONS
@@ -131,6 +141,7 @@ static void vescBLE_HandleKeys(uint8 shift, uint8 keys);
 static void vescBLE_ProcessUARTData(void);
 static void vescBLE_UARTCallback(uint8 port, uint8 event);
 static void vescBLE_SendNotification(uint8 *data, uint16 len);
+static void vescBLE_PeriodicTask(void);
 
 // GATT Service callbacks
 static void vescBLE_RxDataCallback(uint8 *data, uint16 len);
@@ -169,9 +180,6 @@ static gapBondCBs_t vescBLE_BondMgrCBs =
 void vescBLE_Init(uint8 task_id)
 {
   vescBLE_TaskID = task_id;
-  
-  // Setup the GAP
-  // No need for GAP_SetParamValue on CC2540 BLE-Stack 1.5
   
   // Setup the GAP Peripheral Role Profile
   {
@@ -232,17 +240,14 @@ void vescBLE_Init(uint8 task_id)
   // Register callback with VESC Service
   vescService_RegisterRxCallback(vescBLE_RxDataCallback);
   
-  // Register with GAP for HCI/Host messages (not needed for peripheral-only)
-  // VOID GAP_RegisterForHCIMsgs(vescBLE_TaskID);
-  
   // Start the Device
   VOID GAPRole_StartDevice(&vescBLE_PeripheralCBs);
   
   // Start Bond Manager
   VOID GAPBondMgr_Register(&vescBLE_BondMgrCBs);
   
-  // Set event to start device
-  osal_set_event(vescBLE_TaskID, VESC_START_DEVICE_EVT);
+  // Start periodic event
+  osal_start_timerEx(vescBLE_TaskID, VESC_PERIODIC_EVT, VESC_PERIODIC_EVT_PERIOD);
 }
 
 /**
@@ -298,6 +303,17 @@ uint16 vescBLE_ProcessEvent(uint8 task_id, uint16 events)
     return (events ^ VESC_UART_TX_EVT);
   }
   
+  if (events & VESC_PERIODIC_EVT)
+  {
+    // Periodic task for housekeeping
+    vescBLE_PeriodicTask();
+    
+    // Restart timer
+    osal_start_timerEx(vescBLE_TaskID, VESC_PERIODIC_EVT, VESC_PERIODIC_EVT_PERIOD);
+    
+    return (events ^ VESC_PERIODIC_EVT);
+  }
+  
   // Discard unknown events
   return 0;
 }
@@ -339,6 +355,7 @@ static void vescBLE_ProcessOSALMsg(osal_event_hdr_t *pMsg)
 static void vescBLE_ProcessGATTMsg(gattMsgEvent_t *pMsg)
 {
   // Handle GATT messages if needed
+  // Can add MTU exchange handling here if needed
 }
 
 /*********************************************************************
@@ -379,6 +396,10 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
         
         // LED indication - solid
         HalLedSet(HAL_LED_1, HAL_LED_MODE_ON);
+        
+        // Reset pending notification state
+        pendingNotificationLen = 0;
+        notificationRetries = 0;
       }
       break;
       
@@ -387,6 +408,7 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
         // Disconnected - clear connection handle
         gapConnHandle = INVALID_CONNHANDLE;
         notificationsEnabled = FALSE;
+        pendingNotificationLen = 0;
         
         // LED indication - off
         HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
@@ -398,6 +420,7 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
         // Disconnected - clear connection handle
         gapConnHandle = INVALID_CONNHANDLE;
         notificationsEnabled = FALSE;
+        pendingNotificationLen = 0;
         
         // LED indication - off
         HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
@@ -429,6 +452,7 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
 static void vescBLE_HandleKeys(uint8 shift, uint8 keys)
 {
   // Handle key presses if needed
+  // Could add functionality to clear bonding, etc.
 }
 
 /*********************************************************************
@@ -462,13 +486,26 @@ static void vescBLE_ProcessUARTData(void)
   uint8 buffer[BLE_MTU_SIZE];
   uint16 numBytes = 0;
   
-  // Read available data from UART
+  // Only process if connected and notifications enabled
+  if (gapConnHandle == INVALID_CONNHANDLE || !notificationsEnabled)
+  {
+    return;
+  }
+  
+  // Read available data from UART (up to MTU size)
   numBytes = HalUARTRead(VESC_UART_PORT, buffer, BLE_MTU_SIZE);
   
-  if (numBytes > 0 && gapConnHandle != INVALID_CONNHANDLE && notificationsEnabled)
+  if (numBytes > 0)
   {
     // Send data over BLE
     vescBLE_SendNotification(buffer, numBytes);
+    
+    // Check if more data is available
+    if (Hal_UART_RxBufLen(VESC_UART_PORT) > 0)
+    {
+      // Trigger another read
+      osal_set_event(vescBLE_TaskID, VESC_UART_RX_EVT);
+    }
   }
 }
 
@@ -500,8 +537,69 @@ static void vescBLE_RxDataCallback(uint8 *data, uint16 len)
  */
 static void vescBLE_SendNotification(uint8 *data, uint16 len)
 {
+  bStatus_t status;
+  
+  // Check if we have a pending notification
+  if (pendingNotificationLen > 0)
+  {
+    // Already have pending data, skip this one
+    // This prevents buffer overflow
+    return;
+  }
+  
   // Send notification via VESC Service
-  vescService_SendNotification(gapConnHandle, data, len);
+  status = vescService_SendNotification(gapConnHandle, data, len);
+  
+  if (status != SUCCESS)
+  {
+    // Store for retry
+    if (len <= BLE_MTU_SIZE)
+    {
+      osal_memcpy(pendingNotification, data, len);
+      pendingNotificationLen = len;
+      notificationRetries = 0;
+    }
+  }
+}
+
+/*********************************************************************
+ * @fn      vescBLE_PeriodicTask
+ *
+ * @brief   Periodic housekeeping task
+ *
+ * @return  none
+ */
+static void vescBLE_PeriodicTask(void)
+{
+  // Retry pending notification if any
+  if (pendingNotificationLen > 0 && gapConnHandle != INVALID_CONNHANDLE && notificationsEnabled)
+  {
+    bStatus_t status = vescService_SendNotification(gapConnHandle, pendingNotification, pendingNotificationLen);
+    
+    if (status == SUCCESS)
+    {
+      // Clear pending notification
+      pendingNotificationLen = 0;
+      notificationRetries = 0;
+    }
+    else
+    {
+      notificationRetries++;
+      
+      if (notificationRetries >= MAX_NOTIFICATION_RETRIES)
+      {
+        // Give up after max retries
+        pendingNotificationLen = 0;
+        notificationRetries = 0;
+      }
+    }
+  }
+  
+  // Check if there's pending UART data to process
+  if (Hal_UART_RxBufLen(VESC_UART_PORT) > 0)
+  {
+    osal_set_event(vescBLE_TaskID, VESC_UART_RX_EVT);
+  }
 }
 
 /*********************************************************************
@@ -516,6 +614,13 @@ static void vescBLE_SendNotification(uint8 *data, uint16 len)
 void vescBLE_SetNotificationsEnabled(uint8 enabled)
 {
   notificationsEnabled = enabled;
+  
+  // Clear any pending notifications when disabled
+  if (!enabled)
+  {
+    pendingNotificationLen = 0;
+    notificationRetries = 0;
+  }
 }
 
 /*********************************************************************

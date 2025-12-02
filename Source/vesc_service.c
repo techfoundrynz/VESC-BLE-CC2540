@@ -1,4 +1,4 @@
-/**
+/** 
  * VESC BLE Service implementation for CC2540
  * Provides TX/RX characteristics for UART bridge functionality
  */
@@ -17,15 +17,6 @@
  * CONSTANTS
  */
 
-// VESC Service UUID: 6E400001-B5A3-F393-E0A9-E50E24DCCA9E (Nordic UART Service compatible)
-#define VESC_SERVICE_UUID               0xFFE0
-
-// TX Characteristic UUID: 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
-#define VESC_TX_CHAR_UUID               0xFFE1
-
-// RX Characteristic UUID: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
-#define VESC_RX_CHAR_UUID               0xFFE2
-
 // Max data length
 #define VESC_MAX_DATA_LEN               20
 
@@ -42,22 +33,25 @@
  * GLOBAL VARIABLES
  */
 
-// VESC Service UUID
-CONST uint8 vescServiceUUID[ATT_BT_UUID_SIZE] =
+// VESC Service UUID: 6E400001-B5A3-F393-E0A9-E50E24DCCA9E (Nordic UART Service)
+CONST uint8 vescServiceUUID[ATT_UUID_SIZE] =
 { 
-  LO_UINT16(VESC_SERVICE_UUID), HI_UINT16(VESC_SERVICE_UUID)
+  0x9E, 0xCA, 0xDC, 0x24, 0x0E, 0xE5, 0xA9, 0xE0,
+  0x93, 0xF3, 0xA3, 0xB5, 0x01, 0x00, 0x40, 0x6E
 };
 
-// TX Characteristic UUID (notify from device to app)
-CONST uint8 vescTxCharUUID[ATT_BT_UUID_SIZE] =
+// TX Characteristic UUID: 6E400003-B5A3-F393-E0A9-E50E24DCCA9E (Notify - device to app)
+CONST uint8 vescTxCharUUID[ATT_UUID_SIZE] =
 { 
-  LO_UINT16(VESC_TX_CHAR_UUID), HI_UINT16(VESC_TX_CHAR_UUID)
+  0x9E, 0xCA, 0xDC, 0x24, 0x0E, 0xE5, 0xA9, 0xE0,
+  0x93, 0xF3, 0xA3, 0xB5, 0x03, 0x00, 0x40, 0x6E
 };
 
-// RX Characteristic UUID (write from app to device)
-CONST uint8 vescRxCharUUID[ATT_BT_UUID_SIZE] =
+// RX Characteristic UUID: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E (Write - app to device)
+CONST uint8 vescRxCharUUID[ATT_UUID_SIZE] =
 { 
-  LO_UINT16(VESC_RX_CHAR_UUID), HI_UINT16(VESC_RX_CHAR_UUID)
+  0x9E, 0xCA, 0xDC, 0x24, 0x0E, 0xE5, 0xA9, 0xE0,
+  0x93, 0xF3, 0xA3, 0xB5, 0x02, 0x00, 0x40, 0x6E
 };
 
 /*********************************************************************
@@ -72,7 +66,7 @@ static vescServiceCB_t vescServiceCB = NULL;
  */
 
 // VESC Service attribute
-static CONST gattAttrType_t vescService = { ATT_BT_UUID_SIZE, vescServiceUUID };
+static CONST gattAttrType_t vescService = { ATT_UUID_SIZE, vescServiceUUID };
 
 // TX Characteristic Properties
 static uint8 vescTxCharProps = GATT_PROP_NOTIFY;
@@ -80,8 +74,11 @@ static uint8 vescTxCharProps = GATT_PROP_NOTIFY;
 // TX Characteristic Value
 static uint8 vescTxCharValue[VESC_MAX_DATA_LEN] = {0};
 
-// TX Characteristic Configs
-static gattCharCfg_t vescTxCharConfig[GATT_MAX_NUM_CONN];
+// TX Characteristic Configs (will be allocated dynamically)
+static gattCharCfg_t *vescTxCharConfig = NULL;
+
+// Placeholder for TX Config pointer in attribute table
+static uint8 *vescTxCharConfigPtr = NULL;
 
 // TX Characteristic User Description
 static uint8 vescTxCharUserDesc[] = "VESC TX";
@@ -119,7 +116,7 @@ static gattAttribute_t vescAttrTbl[] =
 
       // TX Characteristic Value
       { 
-        { ATT_BT_UUID_SIZE, vescTxCharUUID },
+        { ATT_UUID_SIZE, vescTxCharUUID },
         0, 
         0, 
         (uint8 *)vescTxCharValue 
@@ -130,7 +127,7 @@ static gattAttribute_t vescAttrTbl[] =
         { ATT_BT_UUID_SIZE, clientCharCfgUUID },
         GATT_PERMIT_READ | GATT_PERMIT_WRITE, 
         0, 
-        (uint8 *)vescTxCharConfig 
+        (uint8 *)&vescTxCharConfigPtr
       },
       
       // TX Characteristic User Description
@@ -151,7 +148,7 @@ static gattAttribute_t vescAttrTbl[] =
 
       // RX Characteristic Value
       { 
-        { ATT_BT_UUID_SIZE, vescRxCharUUID },
+        { ATT_UUID_SIZE, vescRxCharUUID },
         GATT_PERMIT_WRITE, 
         0, 
         (uint8 *)vescRxCharValue 
@@ -165,6 +162,9 @@ static gattAttribute_t vescAttrTbl[] =
         vescRxCharUserDesc 
       },
 };
+
+// Calculate number of attributes at compile time
+#define VESC_NUM_ATTRS (sizeof(vescAttrTbl) / sizeof(gattAttribute_t))
 
 /*********************************************************************
  * LOCAL FUNCTIONS
@@ -204,15 +204,26 @@ bStatus_t vescService_AddService(void)
 {
   uint8 status = SUCCESS;
 
+  // Allocate Client Characteristic Configuration table
+  vescTxCharConfig = (gattCharCfg_t *)osal_mem_alloc(sizeof(gattCharCfg_t) * linkDBNumConns);
+  
+  if (vescTxCharConfig == NULL)
+  {
+    return (bleMemAllocError);
+  }
+
   // Initialize Client Characteristic Configuration attributes
   GATTServApp_InitCharCfg(INVALID_CONNHANDLE, vescTxCharConfig);
+  
+  // Update the pointer that the attribute table references
+  vescTxCharConfigPtr = (uint8 *)vescTxCharConfig;
 
   // Register with Link DB to receive link status change callback
   VOID linkDB_Register(vescService_HandleConnStatusCB);
   
   // Register GATT attribute list and CBs with GATT Server App
   status = GATTServApp_RegisterService(vescAttrTbl, 
-                                        GATT_NUM_ATTRS(vescAttrTbl),
+                                        VESC_NUM_ATTRS,
                                         GATT_MAX_ENCRYPT_KEY_SIZE,
                                         &vescServiceCBs);
 
@@ -269,16 +280,9 @@ bStatus_t vescService_SendNotification(uint16 connHandle, uint8 *pData, uint16 l
   
   if (noti.pValue != NULL)
   {
-    // Find the handle
-    uint8 i;
-    for (i = 0; i < GATT_NUM_ATTRS(vescAttrTbl); i++)
-    {
-      if (vescAttrTbl[i].pValue == (uint8 *)vescTxCharValue)
-      {
-        noti.handle = i + 1; // Handle is 1-based
-        break;
-      }
-    }
+    // Find the TX characteristic value handle in the attribute table
+    // TX Characteristic Value is at index 2 (Service=0, TX Decl=1, TX Value=2)
+    noti.handle = vescAttrTbl[2].handle;
     
     VOID osal_memcpy(noti.pValue, pData, len);
     
@@ -326,25 +330,29 @@ static bStatus_t vescService_ReadAttrCB(uint16 connHandle, gattAttribute_t *pAtt
     return (ATT_ERR_ATTR_NOT_LONG);
   }
  
-  if (pAttr->type.len == ATT_BT_UUID_SIZE)
+  if (pAttr->type.len == ATT_UUID_SIZE)
+  {
+    // 128-bit UUID - compare full UUID
+    if (osal_memcmp(pAttr->type.uuid, vescTxCharUUID, ATT_UUID_SIZE) ||
+        osal_memcmp(pAttr->type.uuid, vescRxCharUUID, ATT_UUID_SIZE))
+    {
+      // TX and RX characteristics don't have read permissions
+      *pLen = 0;
+      status = SUCCESS;
+    }
+    else
+    {
+      *pLen = 0;
+      status = ATT_ERR_ATTR_NOT_FOUND;
+    }
+  }
+  else if (pAttr->type.len == ATT_BT_UUID_SIZE)
   {
     // 16-bit UUID
     uint16 uuid = BUILD_UINT16(pAttr->type.uuid[0], pAttr->type.uuid[1]);
-    
     switch (uuid)
     {
-      // No need for "GATT_SERVICE_UUID" or "GATT_CLIENT_CHAR_CFG_UUID" cases;
-      // gattserverapp handles those reads
-      
-      // TX and RX characteristics don't have read permissions, but return no error
-      case VESC_TX_CHAR_UUID:
-      case VESC_RX_CHAR_UUID:
-        *pLen = 0;
-        status = SUCCESS;
-        break;
-        
       default:
-        // Should never get here!
         *pLen = 0;
         status = ATT_ERR_ATTR_NOT_FOUND;
         break;
@@ -352,7 +360,6 @@ static bStatus_t vescService_ReadAttrCB(uint16 connHandle, gattAttribute_t *pAtt
   }
   else
   {
-    // 128-bit UUID
     *pLen = 0;
     status = ATT_ERR_INVALID_HANDLE;
   }
@@ -386,32 +393,40 @@ static bStatus_t vescService_WriteAttrCB(uint16 connHandle, gattAttribute_t *pAt
     return (ATT_ERR_ATTR_NOT_LONG);
   }
   
-  if (pAttr->type.len == ATT_BT_UUID_SIZE)
+  if (pAttr->type.len == ATT_UUID_SIZE)
+  {
+    // 128-bit UUID - check if it's RX characteristic
+    if (osal_memcmp(pAttr->type.uuid, vescRxCharUUID, ATT_UUID_SIZE))
+    {
+      // Validate the value length
+      if (len > VESC_MAX_DATA_LEN)
+      {
+        status = ATT_ERR_INVALID_VALUE_SIZE;
+      }
+      else
+      {
+        // Copy the data
+        VOID osal_memcpy(pAttr->pValue, pValue, len);
+        
+        // Call the callback function if registered
+        if (vescServiceCB != NULL)
+        {
+          vescServiceCB(pValue, len);
+        }
+      }
+    }
+    else
+    {
+      status = ATT_ERR_ATTR_NOT_FOUND;
+    }
+  }
+  else if (pAttr->type.len == ATT_BT_UUID_SIZE)
   {
     // 16-bit UUID
     uint16 uuid = BUILD_UINT16(pAttr->type.uuid[0], pAttr->type.uuid[1]);
     
     switch (uuid)
     {
-      case VESC_RX_CHAR_UUID:
-        // Validate the value length
-        if (len > VESC_MAX_DATA_LEN)
-        {
-          status = ATT_ERR_INVALID_VALUE_SIZE;
-        }
-        else
-        {
-          // Copy the data
-          VOID osal_memcpy(pAttr->pValue, pValue, len);
-          
-          // Call the callback function if registered
-          if (vescServiceCB != NULL)
-          {
-            vescServiceCB(pValue, len);
-          }
-        }
-        break;
-        
       case GATT_CLIENT_CHAR_CFG_UUID:
         status = GATTServApp_ProcessCCCWriteReq(connHandle, pAttr, pValue, len,
                                                  offset, GATT_CLIENT_CFG_NOTIFY);
@@ -434,7 +449,6 @@ static bStatus_t vescService_WriteAttrCB(uint16 connHandle, gattAttribute_t *pAt
   }
   else
   {
-    // 128-bit UUID
     status = ATT_ERR_INVALID_HANDLE;
   }
 

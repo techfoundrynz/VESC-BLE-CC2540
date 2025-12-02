@@ -1,0 +1,67 @@
+#Generating source browse information for project vesc_BLE
+
+
+#Abbreviations
+cc = C$:\Program$ Files$ (x86)\IAR$ Systems\Embedded$ Workbench$ 8.3\common\bin\SourceIndexer.exe
+ll = C$:\Program$ Files$ (x86)\IAR$ Systems\Embedded$ Workbench$ 8.3\common\bin\PbdLink.exe
+bd = C$:\Program$ Files$ (x86)\IAR$ Systems\Embedded$ Workbench$ 8.3\common\bin\makeBrowseData.exe
+
+
+
+#Rules
+rule index
+  depfile = $out.dep
+  command = $cc -out=$out -f $in
+rule link
+  command = $ll -M $out $in
+rule browsedata
+  command = $bd $in -output  $out
+
+
+
+#Build steps
+build OSAL_VescBLE.pbi : index OSAL_VescBLE.xcl
+build vesc_ble_bridge.pbi : index vesc_ble_bridge.xcl
+build vesc_Main.pbi : index vesc_Main.xcl
+build vesc_service.pbi : index vesc_service.xcl
+build hal_drivers.pbi : index hal_drivers.xcl
+build hal_adc.pbi : index hal_adc.xcl
+build hal_aes.pbi : index hal_aes.xcl
+build hal_crc.pbi : index hal_crc.xcl
+build hal_dma.pbi : index hal_dma.xcl
+build hal_flash.pbi : index hal_flash.xcl
+build hal_key.pbi : index hal_key.xcl
+build hal_lcd.pbi : index hal_lcd.xcl
+build hal_led.pbi : index hal_led.xcl
+build hal_sleep.pbi : index hal_sleep.xcl
+build hal_startup.pbi : index hal_startup.xcl
+build hal_timer.pbi : index hal_timer.xcl
+build hal_uart.pbi : index hal_uart.xcl
+build npi.pbi : index npi.xcl
+build OSAL.pbi : index OSAL.xcl
+build osal_bufmgr.pbi : index osal_bufmgr.xcl
+build osal_cbtimer.pbi : index osal_cbtimer.xcl
+build OSAL_ClockBLE.pbi : index OSAL_ClockBLE.xcl
+build OSAL_Memory.pbi : index OSAL_Memory.xcl
+build OSAL_PwrMgr.pbi : index OSAL_PwrMgr.xcl
+build osal_snv.pbi : index osal_snv.xcl
+build OSAL_Timers.pbi : index OSAL_Timers.xcl
+build devinfoservice.pbi : index devinfoservice.xcl
+build gap.pbi : index gap.xcl
+build gapbondmgr.pbi : index gapbondmgr.xcl
+build gatt_uuid.pbi : index gatt_uuid.xcl
+build gattservapp_util.pbi : index gattservapp_util.xcl
+build peripheral.pbi : index peripheral.xcl
+build simpleGATTprofile.pbi : index simpleGATTprofile.xcl
+build simplekeys.pbi : index simplekeys.xcl
+build OnBoard.pbi : index OnBoard.xcl
+build vesc_BLE_part0.pbi : link OSAL_VescBLE.pbi vesc_ble_bridge.pbi vesc_Main.pbi vesc_service.pbi hal_drivers.pbi hal_adc.pbi
+build vesc_BLE_part1.pbi : link hal_aes.pbi hal_crc.pbi hal_dma.pbi hal_flash.pbi hal_key.pbi hal_lcd.pbi
+build vesc_BLE_part2.pbi : link hal_led.pbi hal_sleep.pbi hal_startup.pbi hal_timer.pbi hal_uart.pbi npi.pbi
+build vesc_BLE_part3.pbi : link OSAL.pbi osal_bufmgr.pbi osal_cbtimer.pbi OSAL_ClockBLE.pbi OSAL_Memory.pbi OSAL_PwrMgr.pbi
+build vesc_BLE_part4.pbi : link osal_snv.pbi OSAL_Timers.pbi devinfoservice.pbi gap.pbi gapbondmgr.pbi gatt_uuid.pbi
+build vesc_BLE_part5.pbi : link gattservapp_util.pbi peripheral.pbi simpleGATTprofile.pbi simplekeys.pbi OnBoard.pbi
+build vesc_BLE.pbd : link vesc_BLE_part0.pbi vesc_BLE_part1.pbi vesc_BLE_part2.pbi vesc_BLE_part3.pbi vesc_BLE_part4.pbi vesc_BLE_part5.pbi
+build vesc_BLE.pbw : browsedata vesc_BLE.pbd
+
+

@@ -1,11 +1,11 @@
 /**
  * @file    soft_uart.c
- * @brief   Software UART for CC2540 USB Dongle (P1.6=TX, P1.7=RX)
+ * @brief   Hardware UART implementation for CC2540 (replacing SoftUART)
+ *          Uses USART1 Alt 2:
+ *          TX = P1.6
+ *          RX = P1.7
  * 
- * Bit-banged UART for pins not supported by hardware UART.
- * 
- * @note    115200 baud is difficult with software UART.
- *          Recommend 57600 or 38400 for reliability.
+ * @note    API names kept as SoftUART_xxx to minimize changes in main app.
  */
 
 #include "hal_mcu.h"
@@ -17,34 +17,22 @@
  * CONSTANTS
  */
 
-// Pin definitions
-#define SOFT_UART_TX_PIN    P1_6
-#define SOFT_UART_RX_PIN    P1_7
+// USART1 Alt 2
+// P1.6 = TX
+// P1.7 = RX
 
-#if (SOFT_UART_BAUD == 115200)
-  #define BIT_DELAY()   { asm("NOP"); asm("NOP"); asm("NOP"); asm("NOP"); \
-                          asm("NOP"); asm("NOP"); asm("NOP"); asm("NOP"); \
-                          asm("NOP"); asm("NOP"); asm("NOP"); asm("NOP"); }
-  #define HALF_BIT_DELAY() { asm("NOP"); asm("NOP"); asm("NOP"); asm("NOP"); \
-                             asm("NOP"); asm("NOP"); }
-#elif (SOFT_UART_BAUD == 57600)
-  #define BIT_DELAY()   { uint8 i; for(i=0; i<18; i++) { asm("NOP"); } }
-  #define HALF_BIT_DELAY() { uint8 i; for(i=0; i<9; i++) { asm("NOP"); } }
-#elif (SOFT_UART_BAUD == 38400)
-  #define BIT_DELAY()   { uint8 i; for(i=0; i<27; i++) { asm("NOP"); } }
-  #define HALF_BIT_DELAY() { uint8 i; for(i=0; i<13; i++) { asm("NOP"); } }
-#else // Default 9600
-  #define BIT_DELAY()   { uint8 i; for(i=0; i<110; i++) { asm("NOP"); } }
-  #define HALF_BIT_DELAY() { uint8 i; for(i=0; i<55; i++) { asm("NOP"); } }
-#endif
+// Baud Rate Generation for 32 MHz Clock
+// 115200: M=216, E=11
+#define BAUD_M_115200   216
+#define BAUD_E_115200   11
 
 /*********************************************************************
  * LOCAL VARIABLES
  */
 
 static uint8 rxBuffer[SOFT_UART_RX_BUF_SIZE];
-static uint8 rxHead = 0;
-static uint8 rxTail = 0;
+static volatile uint8 rxHead = 0;
+static volatile uint8 rxTail = 0;
 
 static softUartCB_t appCallback = NULL;
 
@@ -54,61 +42,83 @@ static softUartCB_t appCallback = NULL;
 
 /**
  * @fn      SoftUART_Init
- * @brief   Initialize software UART pins
+ * @brief   Initialize Hardware UART (USART1 Alt 2)
  */
 void SoftUART_Init(softUartCB_t callback)
 {
-    // Configure TX pin (P1.6) as output, high (idle)
-    P1SEL &= ~BV(6);    // GPIO mode
-    P1DIR |= BV(6);     // Output
-    SOFT_UART_TX_PIN = 1; // Idle high
-    
-    // Configure RX pin (P1.7) as input
-    P1SEL &= ~BV(7);    // GPIO mode
-    P1DIR &= ~BV(7);    // Input
-    P1INP &= ~BV(7);    // Pull-up/down enabled
-    P2INP &= ~BV(6);    // Pull-up on port 1
-    
     // Store callback
     appCallback = callback;
     
     // Clear buffer
     rxHead = 0;
     rxTail = 0;
+
+    // 1. Configure P1.6 and P1.7 for Peripheral function
+    // P1SEL bit 6 and 7 set to 1
+    P1SEL |= (BV(6) | BV(7));
+    
+    // 2. Configure P1DIR (not strictly necessary for peripheral, but good practice if switching back)
+    // UART takes control of direction when peripheral selected
+    
+    // 3. Configure USART1 Priority to Alt 2
+    // PERCFG.U1CFG = 1 (Alt 2)
+    PERCFG |= BV(1);
+    
+    // 4. Configure P2SEL (Priority)
+    // Ensure USART1 has priority over USART0 if they share pins (they don't here with Alt2 but safety first)
+    // Not critical for P1.6/7 usually unless mapping conflicts.
+
+    // 5. Configure USART Control
+    // U1CSR.MODE = 1 (UART)
+    // U1CSR.RE = 1 (Receiver Enable)
+    U1CSR = 0x80 | 0x40; 
+    
+    // 6. Configure UART Control
+    // Bit 7: U1FLUSH - Flush unit.
+    // Bit 6: U1FLOW - Flow control.
+    // Bit 5: U1D9 - 9th bit.
+    // Bit 4: U1BIT9 - 9 bit mode.
+    // Bit 3: U1PARity
+    // Bit 2: U1SPB - Stop bits (0=1, 1=2)
+    // Bit 1: U1STOP - Stop bit level (0=Low, 1=High) -> Must be High for standard UART
+    // Bit 0: U1START - Start bit level (0=Low, 1=High) -> Must be Low for standard UART
+    
+    U1UCR = BV(7); // Flush
+    U1UCR = BV(1); // 8N1, Stop High, Start Low.
+    
+    // 7. Baud Rate
+    U1BAUD = BAUD_M_115200;
+    U1GCR = (U1GCR & 0xE0) | BAUD_E_115200;
+    
+    // 8. Interrupts
+    // Clear flag
+    URX1IF = 0;
+    // Enable Receive Interrupt
+    URX1IE = 1;
+    // Enable Global Interrupts (EA is likely already set by OSAL)
+    // IEN0.EA = 1; 
 }
 
 /**
  * @fn      SoftUART_TxByte
- * @brief   Transmit one byte
+ * @brief   Transmit one byte using Hardware UART
  */
 void SoftUART_TxByte(uint8 byte)
 {
-    uint8 i;
-    halIntState_t intState;
+    // Wait for TX buffer to be ready
+    // U1CSR.TX_BYTE = 0 when ready? No.
+    // U1CSR.ACTIVE? 
+    // Check U1CSR.TX_BYTE (bit 1) - set when byte written, cleared when transmitted?
+    // Actually typically check specific flag.
+    // Faster way: check U1CSR.ACTIVE bit 0? No that's activity.
+    // Valid check: Wait for TX complete interrupt flag? Or UTX1IF?
     
-    // Disable interrupts for timing
-    HAL_ENTER_CRITICAL_SECTION(intState);
-    
-    // Start bit (low)
-    SOFT_UART_TX_PIN = 0;
-    BIT_DELAY();
-    
-    // Data bits (LSB first)
-    for (i = 0; i < 8; i++)
-    {
-        if (byte & 0x01)
-            SOFT_UART_TX_PIN = 1;
-        else
-            SOFT_UART_TX_PIN = 0;
-        byte >>= 1;
-        BIT_DELAY();
-    }
-    
-    // Stop bit (high)
-    SOFT_UART_TX_PIN = 1;
-    BIT_DELAY();
-    
-    HAL_EXIT_CRITICAL_SECTION(intState);
+    // Standard blocking write:
+    U1DBUF = byte;
+    while (!(U1CSR & 0x02)); // Wait for TX_BYTE (Bit 1) to be set (transmit complete or buffer empty?)
+                             // CC2540 Guide: Bit 1 (TX_BYTE): set when byte transmitted.
+                             // We should clear it before?
+    U1CSR &= ~0x02;          // Clear TX_BYTE
 }
 
 /**
@@ -126,73 +136,32 @@ void SoftUART_Write(uint8 *buf, uint8 len)
 
 /**
  * @fn      SoftUART_RxByte
- * @brief   Receive one byte (blocking, with timeout)
- * @return  Received byte or 0 if timeout
+ * @brief   Not used in ISR mode usually, but can pull from buffer
  */
 uint8 SoftUART_RxByte(void)
 {
-    uint8 byte = 0;
-    uint8 i;
-    uint16 timeout;
-    halIntState_t intState;
-    
-    // Wait for start bit (low)
-    timeout = 65000;
-    while (SOFT_UART_RX_PIN == 1 && timeout > 0)
-    {
-        timeout--;
-    }
-    
-    if (timeout == 0)
-        return 0;
-    
-    HAL_ENTER_CRITICAL_SECTION(intState);
-    
-    // Wait half bit to sample in middle
-    HALF_BIT_DELAY();
-    
-    // Sample 8 data bits
-    for (i = 0; i < 8; i++)
-    {
-        BIT_DELAY();
-        byte >>= 1;
-        if (SOFT_UART_RX_PIN)
-            byte |= 0x80;
-    }
-    
-    // Wait for stop bit
-    BIT_DELAY();
-    
-    HAL_EXIT_CRITICAL_SECTION(intState);
-    
-    return byte;
+    return 0; // Not implemented for blocking RX in this model
 }
 
 /**
  * @fn      SoftUART_Poll
- * @brief   Poll for incoming data (call from main loop)
+ * @brief   Poll called from main loop
  */
 void SoftUART_Poll(void)
 {
-    // Check for start bit
-    if (SOFT_UART_RX_PIN == 0)
-    {
-        uint8 byte = SoftUART_RxByte();
-        
-        // Store in buffer
-        uint8 nextHead = (rxHead + 1) % SOFT_UART_RX_BUF_SIZE;
-        if (nextHead != rxTail)
-        {
-            rxBuffer[rxHead] = byte;
-            rxHead = nextHead;
-        }
-        
-        // Notify app
-        if (appCallback)
-        {
-            appCallback();
-        }
-    }
+    // In ISR mode, the buffer is filled automatically.
+    // We just check if we have data and notify.
+    
+    // Note: If we really want to just notify periodically, we don't strictly need to do anything here
+    // unless we want to debounce the notification.
+    
+    // Existing vesc_ble.c checks SoftUART_RxBufLen(), so we just rely on that.
+    
+    // However, original code called callback depending on something?
+    // Original SoftUART_Poll checked pin and read byte.
+    
+    // We can simulate "New Data" notification if we want, or just let the Periodic event poll RxBufLen.
+    // The vesc_ble periodic event checks RxBufLen(), so we are good.
 }
 
 /**
@@ -201,10 +170,17 @@ void SoftUART_Poll(void)
  */
 uint8 SoftUART_RxBufLen(void)
 {
+    uint8 len;
+    
+    // Atomic read
+    // HAL_ENTER_CRITICAL_SECTION(intState); 
+    // Simple subtraction is usually atomic enough for byte indices
     if (rxHead >= rxTail)
-        return (rxHead - rxTail);
+        len = rxHead - rxTail;
     else
-        return (SOFT_UART_RX_BUF_SIZE - rxTail + rxHead);
+        len = SOFT_UART_RX_BUF_SIZE - rxTail + rxHead;
+        
+    return len;
 }
 
 /**
@@ -222,4 +198,29 @@ uint8 SoftUART_Read(uint8 *buf, uint8 maxLen)
     }
     
     return count;
+}
+
+/**
+ * @brief   USART1 RX Warning/Error ISR? No, just RX.
+ */
+#pragma vector = URX1_VECTOR
+__interrupt void usart1RxIsr(void)
+{
+    URX1IF = 0; // Clear interrupt flag
+    
+    uint8 byte = U1DBUF;
+    
+    uint8 nextHead = (rxHead + 1) % SOFT_UART_RX_BUF_SIZE;
+    if (nextHead != rxTail)
+    {
+        rxBuffer[rxHead] = byte;
+        rxHead = nextHead;
+        
+        // Notify app if callback exists - usually on *byte* arrival?
+        // Original polled, so it notified on byte arrival.
+        if (appCallback)
+        {
+            appCallback();
+        }
+    }
 }

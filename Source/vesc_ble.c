@@ -206,8 +206,8 @@ uint16 VESC_BLE_ProcessEvent(uint8 task_id, uint16 events)
         VOID GAPRole_StartDevice(&vesc_ble_PeripheralCBs);
         VOID GAPBondMgr_Register(&vesc_ble_BondMgrCBs);
         
-        // Start periodic polling
-        osal_start_timerEx(vesc_ble_TaskID, VESC_BLE_PERIODIC_EVT, VESC_BLE_PERIODIC_EVT_PERIOD);
+        // Start periodic polling - DISABLED for Hardware UART (Event Driven)
+        // osal_start_timerEx(vesc_ble_TaskID, VESC_BLE_PERIODIC_EVT, VESC_BLE_PERIODIC_EVT_PERIOD);
         
         return (events ^ VESC_BLE_START_DEVICE_EVT);
     }
@@ -250,6 +250,13 @@ uint16 VESC_BLE_ProcessEvent(uint8 task_id, uint16 events)
             if (readLen > 0)
             {
                 NUS_SetParameter(NUS_TX_DATA, readLen, uartRxBuf);
+            }
+            
+            // Check if there is more data remaining
+            if (SoftUART_RxBufLen() > 0)
+            {
+                // Re-schedule event immediately to process next chunk
+                osal_set_event(vesc_ble_TaskID, VESC_BLE_UART_RX_EVT);
             }
         }
         

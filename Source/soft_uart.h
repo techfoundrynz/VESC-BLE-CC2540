@@ -14,9 +14,9 @@ extern "C"
  * CONSTANTS
  */
 
-// Baud rate 
+// Baud rate
 #ifndef SOFT_UART_BAUD
-#define SOFT_UART_BAUD      9600
+#define SOFT_UART_BAUD      115200
 #endif
 
 // RX buffer size
@@ -34,6 +34,7 @@ typedef void (*softUartCB_t)(void);
  * FUNCTIONS
  */
 
+// API compatible with previous SoftUART to minimize changes
 void SoftUART_Init(softUartCB_t callback);
 void SoftUART_TxByte(uint8 byte);
 void SoftUART_Write(uint8 *buf, uint8 len);

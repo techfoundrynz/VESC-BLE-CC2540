@@ -1,11 +1,9 @@
 /**
  * @file    vesc_uart.c
- * @brief   Hardware UART implementation for CC2540 (replacing SoftUART)
+ * @brief   Hardware UART implementation for CC2540
  *          Uses USART1 Alt 2:
  *          TX = P1.6
  *          RX = P1.7
- * 
- * @note    API names kept as VescUART_xxx to minimize changes in main app.
  */
 
 #include "hal_mcu.h"
@@ -95,8 +93,8 @@
  */
 
 static uint8 rxBuffer[VESC_UART_RX_BUF_SIZE];
-static volatile uint8 rxHead = 0;
-static volatile uint8 rxTail = 0;
+static volatile uint16 rxHead = 0;
+static volatile uint16 rxTail = 0;
 
 static vescUartCB_t appCallback = NULL;
 
@@ -125,20 +123,12 @@ void VescUART_Init(vescUartCB_t callback)
     // 2. Configure Pin Direction (optional, handled by peripheral usually)
     
     // 3. Configure UART Priority/Alt Location
-    // Set proper bit in PERCFG
     if (PERCFG_ALT_BIT)
         PERCFG |= PERCFG_ALT_BIT;
     else
-        PERCFG &= ~PERCFG_ALT_BIT; // Assuming we know the bit mask is correct for the port
+        PERCFG &= ~PERCFG_ALT_BIT;
         
-    // Note on PERCFG:
-    // Bit 0: UART0 Alt location (0=Alt1, 1=Alt2)
-    // Bit 1: UART1 Alt location (0=Alt1, 1=Alt2)
-    // Our MACRO logic above handles the specific bit value to set.
-    
-    // 4. Configure P2SEL (Priority) - Omitted for simplicity, usually defaults are fine.
-
-    // 5. Configure USART Control
+    // 4. Configure USART Control
     // CSR.MODE = 1 (UART)
     // CSR.RE = 1 (Receiver Enable)
     UXCSR = 0x80 | 0x40; 
@@ -188,10 +178,10 @@ void VescUART_Write(uint8 *buf, uint8 len)
  * @fn      VescUART_RxBufLen
  * @brief   Get number of bytes in RX buffer
  */
-uint8 VescUART_RxBufLen(void)
+uint16 VescUART_RxBufLen(void)
 {
-    uint8 head = rxHead;  // Read volatile once
-    uint8 tail = rxTail;  // Read volatile once
+    uint16 head = rxHead;  // Read volatile once
+    uint16 tail = rxTail;  // Read volatile once
     
     if (head >= tail)
         return (head - tail);
@@ -204,10 +194,10 @@ uint8 VescUART_RxBufLen(void)
  * @brief   Read from RX buffer
  */
 
-uint8 VescUART_Read(uint8 *buf, uint8 maxLen)
+uint16 VescUART_Read(uint8 *buf, uint16 maxLen)
 {
-    uint8 count = 0;
-    uint8 head = rxHead;  // Read volatile once
+    uint16 count = 0;
+    uint16 head = rxHead;  // Read volatile once
     
     while (rxTail != head && count < maxLen)
     {
@@ -219,7 +209,24 @@ uint8 VescUART_Read(uint8 *buf, uint8 maxLen)
 }
 
 /**
+ * @fn      VescUART_Poll
+ * @brief   Polls the buffer and triggers callback if data exists.
+ *          Call this periodically (e.g. 10ms) from main loop.
+ */
+void VescUART_Poll(void)
+{
+    if (rxHead != rxTail)
+    {
+        if (appCallback)
+        {
+            appCallback();
+        }
+    }
+}
+
+/**
  * @brief   UART RX Interrupt Service Routine
+ *          OPTIMIZED: No Callback Overhead!
  */
 #pragma vector = URX_VECTOR
 __interrupt void uartRxIsr(void)
@@ -228,15 +235,12 @@ __interrupt void uartRxIsr(void)
     
     uint8 byte = UXDBUF;
     
-    uint8 nextHead = (rxHead + 1) % VESC_UART_RX_BUF_SIZE;
+    uint16 nextHead = (rxHead + 1) % VESC_UART_RX_BUF_SIZE;
     if (nextHead != rxTail)
     {
         rxBuffer[rxHead] = byte;
         rxHead = nextHead;
         
-        if (appCallback)
-        {
-            appCallback();
-        }
+        // Removed appCallback() to reduce ISR latency and prevent blocking
     }
 }

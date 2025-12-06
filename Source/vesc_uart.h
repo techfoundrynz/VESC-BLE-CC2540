@@ -21,7 +21,7 @@ extern "C"
 
 // RX buffer size
 #ifndef VESC_UART_RX_BUF_SIZE
-#define VESC_UART_RX_BUF_SIZE   256
+#define VESC_UART_RX_BUF_SIZE   1024
 #endif
 
 // UART Selection (0 or 1)
@@ -47,8 +47,9 @@ typedef void (*vescUartCB_t)(void);
 // API moved to Hardware UART logic
 void VescUART_Init(vescUartCB_t callback);
 void VescUART_Write(uint8 *buf, uint8 len);
-uint8 VescUART_RxBufLen(void);
-uint8 VescUART_Read(uint8 *buf, uint8 maxLen);
+uint16 VescUART_RxBufLen(void);
+uint16 VescUART_Read(uint8 *buf, uint16 maxLen);
+void VescUART_Poll(void);
 
 #ifdef __cplusplus
 }

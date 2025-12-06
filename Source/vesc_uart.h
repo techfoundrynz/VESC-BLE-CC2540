@@ -21,7 +21,7 @@ extern "C"
 
 // RX buffer size
 #ifndef VESC_UART_RX_BUF_SIZE
-#define VESC_UART_RX_BUF_SIZE   1024
+#define VESC_UART_RX_BUF_SIZE   256
 #endif
 
 // UART Selection (0 or 1)

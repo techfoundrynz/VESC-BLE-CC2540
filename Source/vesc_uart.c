@@ -190,25 +190,26 @@ void VescUART_Write(uint8 *buf, uint8 len)
  */
 uint8 VescUART_RxBufLen(void)
 {
-    uint8 len;
+    uint8 head = rxHead;  // Read volatile once
+    uint8 tail = rxTail;  // Read volatile once
     
-    if (rxHead >= rxTail)
-        len = rxHead - rxTail;
+    if (head >= tail)
+        return (head - tail);
     else
-        len = VESC_UART_RX_BUF_SIZE - rxTail + rxHead;
-        
-    return len;
+        return (VESC_UART_RX_BUF_SIZE - tail + head);
 }
 
 /**
  * @fn      VescUART_Read
  * @brief   Read from RX buffer
  */
+
 uint8 VescUART_Read(uint8 *buf, uint8 maxLen)
 {
     uint8 count = 0;
+    uint8 head = rxHead;  // Read volatile once
     
-    while (rxTail != rxHead && count < maxLen)
+    while (rxTail != head && count < maxLen)
     {
         buf[count++] = rxBuffer[rxTail];
         rxTail = (rxTail + 1) % VESC_UART_RX_BUF_SIZE;

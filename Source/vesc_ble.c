@@ -235,8 +235,8 @@ uint16 VESC_BLE_ProcessEvent(uint8 task_id, uint16 events)
         if (bleConnected && len > 0)
         {
             // Cap at buffer size
-            if (len > UART_RX_BUF_SIZE)
-                len = UART_RX_BUF_SIZE;
+            if (len > BLE_MAX_DATA_LEN)
+               len = BLE_MAX_DATA_LEN;
             
             // Read everything available into local buffer
             uint8 readLen = VescUART_Read(uartRxBuf, len);
@@ -291,18 +291,26 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
     switch (newState)
     {
         case GAPROLE_STARTED:
+            HAL_TURN_OFF_LED1();
+            HAL_TURN_OFF_LED2();
             break;
             
         case GAPROLE_ADVERTISING:
+            HAL_TURN_OFF_LED1();
+            HAL_TURN_ON_LED2();
             bleConnected = FALSE;
             break;
             
         case GAPROLE_CONNECTED:
+            HAL_TURN_ON_LED1();
+            HAL_TURN_OFF_LED2();
             bleConnected = TRUE;
             break;
             
         case GAPROLE_WAITING:
         case GAPROLE_WAITING_AFTER_TIMEOUT:
+            HAL_TURN_OFF_LED1();
+            HAL_TURN_ON_LED2();
             bleConnected = FALSE;
             {
                 uint8 advertEnabled = TRUE;
@@ -311,6 +319,9 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
             break;
             
         case GAPROLE_ERROR:
+            // Error - Both ON
+            HAL_TURN_ON_LED1();
+            HAL_TURN_ON_LED2();
             break;
             
         default:

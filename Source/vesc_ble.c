@@ -122,6 +122,10 @@ static nusServiceCBs_t nusServiceCBs =
 void VESC_BLE_Init(uint8 task_id)
 {
     vesc_ble_TaskID = task_id;
+
+    // Force device to stay awake to ensure Hardware UART (Rx) works
+    // UART requires the 32MHz crystal which is turned off in PM2/PM3
+    osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
     
     VOID GAP_SetParamValue(TGAP_CONN_PAUSE_PERIPHERAL, DEFAULT_CONN_PAUSE_PERIPHERAL);
     

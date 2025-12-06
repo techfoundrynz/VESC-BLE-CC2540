@@ -18,6 +18,14 @@ C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\
 -I
 C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540EB
 -I
+C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\cc2540
+-I
+C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb
+-I
+C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc
+-I
+C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library
+-I
 C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include
 -I
 C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\services\saddr
@@ -65,6 +73,14 @@ C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\include
 C:\Texas Instruments\BLE-CC254x-1.5.2.0\Components\hal\include
 -I
 C:\Texas Instruments\BLE-CC254x-1.5.2.0\Components\hal\target\CC2540EB
+-I
+C:\Texas Instruments\BLE-CC254x-1.5.2.0\Components\hal\target\CC2540USB\usb\library\cc2540
+-I
+C:\Texas Instruments\BLE-CC254x-1.5.2.0\Components\hal\target\CC2540USB\usb\library\usb
+-I
+C:\Texas Instruments\BLE-CC254x-1.5.2.0\Components\hal\target\CC2540USB\usb\class_cdc
+-I
+C:\Texas Instruments\BLE-CC254x-1.5.2.0\Components\hal\target\CC2540USB\usb\library
 -I
 C:\Texas Instruments\BLE-CC254x-1.5.2.0\Components\osal\include
 -I
@@ -429,11 +445,12 @@ C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\Profiles\Keys
 -DOSAL_CBTIMER_NUM_TASKS=1
 -DHAL_AES_DMA=TRUE
 -DHAL_DMA=TRUE
--DPOWER_SAVING=1
+-DxPOWER_SAVING=1
 -DxPLUS_BROADCASTER=1
 -DHAL_LCD=FALSE
 -DHAL_LED=TRUE
--DHAL_KEY=TRUE
+-DHAL_KEY=FALSE
+-DHAL_UART=TRUE
 -DCC2540_MINIDK=1
 -DBROADCASTER_CFG=0x01
 -DOBSERVER_CFG=0x02

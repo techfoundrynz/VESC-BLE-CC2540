@@ -8694,71 +8694,68 @@
         <group>
             <name>Target</name>
             <group>
-                <name>CC2540EB</name>
+                <name>CC2540USB</name>
                 <group>
                     <name>Config</name>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_board_cfg.h</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_board_cfg.h</name>
                     </file>
                 </group>
                 <group>
                     <name>Drivers</name>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_adc.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_adc.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_aes.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_aes.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_crc.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_crc.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_dma.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_dma.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_flash.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_key.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_key.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_lcd.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_lcd.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_led.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_led.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_sleep.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_sleep.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_startup.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_startup.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_timer.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_timer.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_uart.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_uart.c</name>
                     </file>
                 </group>
                 <group>
                     <name>Includes</name>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_aes.h</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_aes.h</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_ccm.h</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_crc.h</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_crc.h</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_dma.h</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_dma.h</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_mcu.h</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_mcu.h</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_types.h</name>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_types.h</name>
                     </file>
                 </group>
             </group>

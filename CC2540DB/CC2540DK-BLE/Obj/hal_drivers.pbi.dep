@@ -23,5 +23,4 @@ hal_drivers.pbi: \
   C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\8051\inc\clib/sysmac.h \
   C:\Texas\ Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include/comdef.h \
   C:\Texas\ Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include/OSAL_Memory.h \
-  C:\Texas\ Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include/OSAL_Timers.h \
-  C:\Texas\ Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include\OSAL_PwrMgr.h
+  C:\Texas\ Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include/OSAL_Timers.h

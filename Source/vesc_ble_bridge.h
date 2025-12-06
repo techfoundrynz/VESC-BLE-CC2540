@@ -1,5 +1,4 @@
 /**
- * vesc_ble_bridge.h
  * 
  * VESC BLE Bridge main application header
  */

@@ -257,7 +257,7 @@ uint16 VESC_BLE_ProcessEvent(uint8 task_id, uint16 events)
             while (VescUART_RxBufLen() > 0)
             {
                  // Read into retry buffer
-                 uint8 avail = VescUART_RxBufLen();
+                 uint16 avail = VescUART_RxBufLen();
                  if (avail > BLE_MAX_DATA_LEN) avail = BLE_MAX_DATA_LEN;
                  
                  // Read data from UART

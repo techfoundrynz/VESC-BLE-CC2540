@@ -28,7 +28,7 @@
  * CONSTANTS
  */
 
-#define DEVICE_NAME                     "VESC BLE UART"
+#define DEVICE_NAME                     "FMFree GT"
 #define DEFAULT_ADVERTISING_INTERVAL    64
 #define DEFAULT_DESIRED_MIN_CONN_INTERVAL     8
 #define DEFAULT_DESIRED_MAX_CONN_INTERVAL     16

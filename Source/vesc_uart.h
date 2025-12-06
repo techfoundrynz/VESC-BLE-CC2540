@@ -26,12 +26,12 @@ extern "C"
 
 // UART Selection (0 or 1)
 #ifndef VESC_UART_PORT
-#define VESC_UART_PORT  1
+#define VESC_UART_PORT  0
 #endif
 
 // UART Alternate Location (1 or 2)
 #ifndef VESC_UART_ALT
-#define VESC_UART_ALT   2
+#define VESC_UART_ALT   1
 #endif
 
 /*********************************************************************

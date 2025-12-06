@@ -318,7 +318,7 @@
                     <state>HAL_LCD=FALSE</state>
                     <state>HAL_LED=TRUE</state>
                     <state>HAL_UART=TRUE</state>
-                    <state>HAL_UART_DMA=2</state>
+                    <state>HAL_UART_DMA=1</state>
                     <state>xCC2540_MINIDK</state>
                 </option>
                 <option>

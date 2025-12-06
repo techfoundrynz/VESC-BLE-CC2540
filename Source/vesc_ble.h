@@ -24,7 +24,7 @@ extern "C"
 
 // VESC BLE Task Events
 #define VESC_BLE_START_DEVICE_EVT     0x0001
-#define VESC_BLE_PERIODIC_EVT         0x0002
+
 #define VESC_BLE_UART_RX_EVT          0x0004
 
 /*********************************************************************

@@ -22,7 +22,7 @@
 
 #include "vesc_ble.h"
 #include "nus_service.h"
-#include "soft_uart.h"
+#include "vesc_uart.h"
 
 /*********************************************************************
  * CONSTANTS
@@ -36,10 +36,9 @@
 #define DEFAULT_DESIRED_CONN_TIMEOUT          100
 #define DEFAULT_CONN_PAUSE_PERIPHERAL         6
 
-#define VESC_BLE_PERIODIC_EVT_PERIOD    5   // 5ms polling
 
 #define BLE_MAX_DATA_LEN                20
-#define UART_RX_BUF_SIZE                128
+#define UART_RX_BUF_SIZE                256
 
 /*********************************************************************
  * GLOBAL VARIABLES
@@ -51,23 +50,7 @@ uint8 vesc_ble_TaskID;
  * LOCAL VARIABLES
  */
 
-static uint8 scanRspData[] =
-{
-    14,
-    GAP_ADTYPE_LOCAL_NAME_COMPLETE,
-    'V', 'E', 'S', 'C', ' ', 'B', 'L', 'E', ' ', 'U', 'A', 'R', 'T',
-    
-    0x05,
-    GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE,
-    LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
-    HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
-    LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
-    HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
-    
-    0x02,
-    GAP_ADTYPE_POWER_LEVEL,
-    0
-};
+static uint8 scanRspData[31] = {0};
 
 static uint8 advertData[] =
 {
@@ -92,7 +75,7 @@ static bool bleConnected = FALSE;
 static void vesc_ble_ProcessOSALMsg(osal_event_hdr_t *pMsg);
 static void peripheralStateNotificationCB(gaprole_States_t newState);
 static void nusServiceChangeCB(uint8 paramID);
-static void softUartCallback(void);
+static void vescUartCallback(void);
 
 /*********************************************************************
  * PROFILE CALLBACKS
@@ -138,6 +121,32 @@ void VESC_BLE_Init(uint8 task_id)
         uint16 desired_slave_latency = DEFAULT_DESIRED_SLAVE_LATENCY;
         uint16 desired_conn_timeout = DEFAULT_DESIRED_CONN_TIMEOUT;
         
+        // Initialize Scan Response Data
+        {
+            uint8 scanResIdx = 0;
+            
+            // 1. Local Name
+            uint8 nameLen = osal_strlen(DEVICE_NAME);
+            if (nameLen > 20) nameLen = 20; // Safety cap to fit in 31 bytes
+            scanRspData[scanResIdx++] = nameLen + 1; // Length of this data
+            scanRspData[scanResIdx++] = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
+            osal_memcpy(&scanRspData[scanResIdx], DEVICE_NAME, nameLen);
+            scanResIdx += nameLen;
+            
+            // 2. Connection Interval
+            scanRspData[scanResIdx++] = 0x05;
+            scanRspData[scanResIdx++] = GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE;
+            scanRspData[scanResIdx++] = LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL);
+            scanRspData[scanResIdx++] = HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL);
+            scanRspData[scanResIdx++] = LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL);
+            scanRspData[scanResIdx++] = HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL);
+            
+            // 3. Tx Power
+            scanRspData[scanResIdx++] = 0x02;
+            scanRspData[scanResIdx++] = GAP_ADTYPE_POWER_LEVEL;
+            scanRspData[scanResIdx++] = 0; // 0 dBm
+        }
+
         GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
         GAPRole_SetParameter(GAPROLE_ADVERT_OFF_TIME, sizeof(uint16), &gapRole_AdvertOffTime);
         GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, sizeof(scanRspData), scanRspData);
@@ -180,8 +189,8 @@ void VESC_BLE_Init(uint8 task_id)
     
     NUS_RegisterAppCBs(&nusServiceCBs);
     
-    // Initialize Software UART on P1.6/P1.7
-    SoftUART_Init(softUartCallback);
+    // Initialize Hardware UART on P1.6/P1.7
+    VescUART_Init(vescUartCallback);
     
     //HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT);
     
@@ -210,54 +219,48 @@ uint16 VESC_BLE_ProcessEvent(uint8 task_id, uint16 events)
         VOID GAPRole_StartDevice(&vesc_ble_PeripheralCBs);
         VOID GAPBondMgr_Register(&vesc_ble_BondMgrCBs);
         
-        // Start periodic polling - DISABLED for Hardware UART (Event Driven)
-        // osal_start_timerEx(vesc_ble_TaskID, VESC_BLE_PERIODIC_EVT, VESC_BLE_PERIODIC_EVT_PERIOD);
+
         
         return (events ^ VESC_BLE_START_DEVICE_EVT);
     }
     
-    if (events & VESC_BLE_PERIODIC_EVT)
-    {
-        // Poll software UART for incoming data
-        SoftUART_Poll();
-        
-        // Check
-        uint8 len = SoftUART_RxBufLen();
-        if (bleConnected && len > 0)
-        {
-            if (len > BLE_MAX_DATA_LEN)
-                len = BLE_MAX_DATA_LEN;
-            
-            uint8 readLen = SoftUART_Read(uartRxBuf, len);
-            if (readLen > 0)
-            {
-                NUS_SetParameter(NUS_TX_DATA, readLen, uartRxBuf);
-            }
-        }
-        
-        // Restart timer
-        osal_start_timerEx(vesc_ble_TaskID, VESC_BLE_PERIODIC_EVT, VESC_BLE_PERIODIC_EVT_PERIOD);
-        
-        return (events ^ VESC_BLE_PERIODIC_EVT);
-    }
+
     
     if (events & VESC_BLE_UART_RX_EVT)
     {
         // Process any pending UART data
-        uint8 len = SoftUART_RxBufLen();
+        // Read "all" available bytes up to our buffer size, similar to ESP32 approach
+        uint8 len = VescUART_RxBufLen();
+        
         if (bleConnected && len > 0)
         {
-            if (len > BLE_MAX_DATA_LEN)
-                len = BLE_MAX_DATA_LEN;
+            // Cap at buffer size
+            if (len > UART_RX_BUF_SIZE)
+                len = UART_RX_BUF_SIZE;
             
-            uint8 readLen = SoftUART_Read(uartRxBuf, len);
+            // Read everything available into local buffer
+            uint8 readLen = VescUART_Read(uartRxBuf, len);
+            
             if (readLen > 0)
             {
-                NUS_SetParameter(NUS_TX_DATA, readLen, uartRxBuf);
+                uint8 remaining = readLen;
+                uint8 packetIndex = 0;
+                
+                while (remaining > 0)
+                {
+                    uint8 packetSize = (remaining < BLE_MAX_DATA_LEN) ? remaining : BLE_MAX_DATA_LEN;
+                    
+                    // Send this chunk
+                    // Note: NUS_SetParameter copies the data, so we can pass pointer to offset
+                    NUS_SetParameter(NUS_TX_DATA, packetSize, &uartRxBuf[packetIndex]);
+                    
+                    remaining -= packetSize;
+                    packetIndex += packetSize;
+                }
             }
             
-            // Check if there is more data remaining
-            if (SoftUART_RxBufLen() > 0)
+            // Check if there is MORE data remaining in ring buffer (if we filled our buffer)
+            if (VescUART_RxBufLen() > 0)
             {
                 // Re-schedule event immediately to process next chunk
                 osal_set_event(vesc_ble_TaskID, VESC_BLE_UART_RX_EVT);
@@ -327,7 +330,7 @@ static void nusServiceChangeCB(uint8 paramID)
             if (len > 0)
             {
                 // Send data to VESC via software UART
-                SoftUART_Write(data, len);
+                VescUART_Write(data, len);
             }
             break;
             
@@ -336,7 +339,7 @@ static void nusServiceChangeCB(uint8 paramID)
     }
 }
 
-static void softUartCallback(void)
+static void vescUartCallback(void)
 {
     // Trigger event to process UART data
     osal_set_event(vesc_ble_TaskID, VESC_BLE_UART_RX_EVT);

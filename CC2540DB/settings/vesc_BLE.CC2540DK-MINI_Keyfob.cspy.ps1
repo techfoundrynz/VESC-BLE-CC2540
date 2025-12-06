@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\settings\vesc_BLE.CC2540DK-MINI_Keyfob.general.xcl" --backend -f "C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\settings\vesc_BLE.CC2540DK-MINI_Keyfob.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\settings\vesc_BLE.CC2540DK-MINI_Keyfob.general.xcl" --backend -f "C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\settings\vesc_BLE.CC2540DK-MINI_Keyfob.driver.xcl" 
 }
 else
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\settings\vesc_BLE.CC2540DK-MINI_Keyfob.general.xcl" --debug_file=$debugfile --backend -f "C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\VESC_BLE\CC2540DB\settings\vesc_BLE.CC2540DK-MINI_Keyfob.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\settings\vesc_BLE.CC2540DK-MINI_Keyfob.general.xcl" --debug_file=$debugfile --backend -f "C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\settings\vesc_BLE.CC2540DK-MINI_Keyfob.driver.xcl" 
 }

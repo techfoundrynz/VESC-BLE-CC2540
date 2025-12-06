@@ -8620,22 +8620,28 @@
     <group>
         <name>APP</name>
         <file>
-            <name>$PROJ_DIR$\..\Source\OSAL_VescBLE.c</name>
+            <name>$PROJ_DIR$\..\Source\nus_service.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_ble_bridge.c</name>
+            <name>$PROJ_DIR$\..\Source\nus_service.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_ble_bridge.h</name>
+            <name>$PROJ_DIR$\..\Source\OSAL_vesc_ble.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_Main.c</name>
+            <name>$PROJ_DIR$\..\Source\soft_uart.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_service.c</name>
+            <name>$PROJ_DIR$\..\Source\soft_uart.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_service.h</name>
+            <name>$PROJ_DIR$\..\Source\vesc_ble.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Source\vesc_ble.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Source\Vesc_Main.c</name>
         </file>
     </group>
     <group>
@@ -8694,6 +8700,75 @@
         <group>
             <name>Target</name>
             <group>
+                <name>CC2540EB</name>
+                <group>
+                    <name>Config</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_board_cfg.h</name>
+                    </file>
+                </group>
+                <group>
+                    <name>Drivers</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_adc.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_aes.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_crc.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_dma.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_key.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_lcd.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_led.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_sleep.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_startup.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_timer.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_uart.c</name>
+                    </file>
+                </group>
+                <group>
+                    <name>Includes</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_aes.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_ccm.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_crc.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_dma.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_mcu.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_types.h</name>
+                    </file>
+                </group>
+            </group>
+            <group>
                 <name>CC2540USB</name>
                 <group>
                     <name>Config</name>
@@ -8741,7 +8816,7 @@
                     </file>
                 </group>
                 <group>
-                    <name>Includes</name>
+                    <name>includes</name>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_aes.h</name>
                     </file>
@@ -8756,6 +8831,84 @@
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_types.h</name>
+                    </file>
+                </group>
+                <group>
+                    <name>USB</name>
+                    <group>
+                        <name>class_cdc</name>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc.h</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc_descriptor.s51</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc_hooks.c</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc_hooks.h</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_firmware_library_config.c</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_firmware_library_config.h</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_firmware_library_headers.h</name>
+                        </file>
+                    </group>
+                    <group>
+                        <name>library</name>
+                        <group>
+                            <name>cc2540</name>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\cc2540\usb_board_cfg.h</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\cc2540\usb_interrupt.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\cc2540\usb_suspend.c</name>
+                            </file>
+                        </group>
+                        <group>
+                            <name>usb</name>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_descriptor_parser.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_descriptor_parser.h</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_framework.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_framework_structs.h</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_interrupt.h</name>
+                            </file>
+                        </group>
+                    </group>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_descriptor.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_framework.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_reg.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_standard_requests.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_standard_requests.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_suspend.h</name>
                     </file>
                 </group>
             </group>
@@ -8785,13 +8938,13 @@
             <name>$PROJ_DIR$\..\..\..\..\Components\ble\host\linkdb.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include\ll.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include\ll.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\common\npi\npi_np\npi.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include\phy.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include\phy.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\Components\ble\include\sm.h</name>
@@ -8875,9 +9028,6 @@
             <name>$PROJ_DIR$\..\..\Include\gattservapp.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\GATT\gattservapp_util.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\Profiles\OAD\oad.h</name>
         </file>
         <file>
@@ -8887,10 +9037,10 @@
             <name>$PROJ_DIR$\..\..\Profiles\OAD\oad_target.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\Roles\CC254x\peripheral.c</name>
+            <name>$PROJ_DIR$\..\..\Profiles\Roles\peripheral.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\Roles\CC254x\peripheral.h</name>
+            <name>$PROJ_DIR$\..\..\Profiles\Roles\peripheral.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\Profiles\Roles\peripheralBroadcaster.c</name>
@@ -8899,13 +9049,13 @@
             <name>$PROJ_DIR$\..\..\Profiles\Roles\peripheralBroadcaster.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x\simpleGATTprofile.c</name>
+            <name>$PROJ_DIR$\..\..\Profiles\SimpleProfile\simpleGATTprofile.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\Profiles\SimpleProfile\simpleGATTprofile.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\Keys\CC254x\simplekeys.c</name>
+            <name>$PROJ_DIR$\..\..\Profiles\Keys\simplekeys.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\Profiles\Keys\simplekeys.h</name>
@@ -8918,9 +9068,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\buildConfig.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\f8wConfig.cfg</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\common\cc2540\OnBoard.c</name>

@@ -1,0 +1,16 @@
+gap.pbi: \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\Profiles\Roles\gap.c \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\ble\include\bcomdef.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include\comdef.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\hal_types.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\include\hal_defs.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\ble\include\gap.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\ble\include/bcomdef.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include\OSAL.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\8051\inc\clib\limits.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\8051\inc\clib/sysmac.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include/comdef.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include/OSAL_Memory.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\osal\include/OSAL_Timers.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\ble\include/sm.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\ble\include\sm.h

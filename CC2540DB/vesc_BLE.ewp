@@ -113,15 +113,15 @@
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>CC2540DK-BLE\Exe</state>
+                    <state>CC2540DK-MINI Keyfob\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>CC2540DK-BLE\Obj</state>
+                    <state>CC2540DK-MINI Keyfob\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>CC2540DK-BLE\List</state>
+                    <state>CC2540DK-MINI Keyfob\List</state>
                 </option>
                 <option>
                     <name>GOutputBinary</name>
@@ -167,7 +167,7 @@
                 </option>
                 <option>
                     <name>General Idata Stack Size</name>
-                    <state>0xC0</state>
+                    <state>0xA0</state>
                 </option>
                 <option>
                     <name>General Pdata Stack Size</name>
@@ -317,9 +317,7 @@
                     <state>xPLUS_BROADCASTER</state>
                     <state>HAL_LCD=FALSE</state>
                     <state>HAL_LED=TRUE</state>
-                    <state>HAL_KEY=FALSE</state>
-                    <state>HAL_UART=TRUE</state>
-                    <state>CC2540_MINIDK</state>
+                    <state>xCC2540_MINIDK</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -492,28 +490,25 @@
                     <state>$PROJ_DIR$\..\..\common</state>
                     <state>$PROJ_DIR$\..\..\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\hal\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\cc2540</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\osal\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\services\saddr</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\phy</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\phy</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\hci</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\host</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\ROM</state>
                     <state>$PROJ_DIR$\..\..\common\cc2540</state>
                     <state>$PROJ_DIR$\..\..\common\npi\npi_np</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Roles\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Roles</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Keys</state>
+                    <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
+                    <state>$PROJ_DIR$\..\..\Profiles\TXRX</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -791,7 +786,7 @@
                 </option>
                 <option>
                     <name>OutputFile</name>
-                    <state>vescBLE.d51</state>
+                    <state>SimpleBLEPeripheral.d51</state>
                 </option>
                 <option>
                     <name>OutputFormat</name>
@@ -857,7 +852,7 @@
                 </option>
                 <option>
                     <name>XclFile</name>
-                    <state>C:\Texas Instruments\BLE-CC254x-1.5.2.0\Projects\ble\common\cc2540\ti_51ew_cc2540b.xcl</state>
+                    <state>C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\common\cc2540\ti_51ew_cc2540b.xcl</state>
                 </option>
                 <option>
                     <name>XclFileSlave</name>
@@ -993,7 +988,7 @@
                 </option>
                 <option>
                     <name>ExtraOutputFile</name>
-                    <state>vescBLE.hex</state>
+                    <state>SimpleBLEPeripheral.hex</state>
                 </option>
                 <option>
                     <name>ExtraOutputFormat</name>
@@ -1438,7 +1433,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>C:\Program Files (x86)\IAR Systems\EW8051-10.20.1\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
                 </option>
                 <option>
                     <name>PCReadOnly</name>
@@ -1476,7 +1471,6 @@
                     <state>xPLUS_BROADCASTER</state>
                     <state>HAL_LCD=TRUE</state>
                     <state>HAL_LED=FALSE</state>
-                    <state>HAL_KEY=TRUE</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -1653,20 +1647,15 @@
                     <state>$PROJ_DIR$\..\..\..\..\Components\osal\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\services\saddr</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\phy</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\phy</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\hci</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\host</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\ROM</state>
                     <state>$PROJ_DIR$\..\..\common\cc2540</state>
                     <state>$PROJ_DIR$\..\..\common\npi\npi_np</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Roles\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Roles</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile</state>
                     <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys\CC254x</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -2591,7 +2580,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>C:\Program Files (x86)\IAR Systems\EW8051-10.20.1\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F128.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F128.i51</state>
                 </option>
                 <option>
                     <name>PCReadOnly</name>
@@ -2629,7 +2618,6 @@
                     <state>xPLUS_BROADCASTER</state>
                     <state>HAL_LCD=FALSE</state>
                     <state>HAL_LED=TRUE</state>
-                    <state>HAL_KEY=TRUE</state>
                     <state>CC2540_MINIDK</state>
                 </option>
                 <option>
@@ -2807,20 +2795,16 @@
                     <state>$PROJ_DIR$\..\..\..\..\Components\osal\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\services\saddr</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\phy</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\phy</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\hci</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\host</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\ROM</state>
                     <state>$PROJ_DIR$\..\..\common\cc2540</state>
                     <state>$PROJ_DIR$\..\..\common\npi\npi_np</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Roles\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Roles</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Keys</state>
+                    <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -3745,7 +3729,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>C:\Program Files (x86)\IAR Systems\EW8051-10.20.1\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F128.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F128.i51</state>
                 </option>
                 <option>
                     <name>PCReadOnly</name>
@@ -3783,7 +3767,6 @@
                     <state>xPLUS_BROADCASTER</state>
                     <state>HAL_LCD=TRUE</state>
                     <state>HAL_LED=FALSE</state>
-                    <state>HAL_KEY=TRUE</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -3960,20 +3943,15 @@
                     <state>$PROJ_DIR$\..\..\..\..\Components\osal\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\services\saddr</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\phy</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\phy</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\hci</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\host</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\ROM</state>
                     <state>$PROJ_DIR$\..\..\common\cc2540</state>
                     <state>$PROJ_DIR$\..\..\common\npi\npi_np</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Roles\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Roles</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile</state>
                     <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys\CC254x</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -4898,7 +4876,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>C:\Program Files (x86)\IAR Systems\EW8051-10.20.1\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
                 </option>
                 <option>
                     <name>PCReadOnly</name>
@@ -4940,7 +4918,6 @@
                     <state>xPLUS_BROADCASTER</state>
                     <state>HAL_LCD=TRUE</state>
                     <state>HAL_LED=FALSE</state>
-                    <state>HAL_KEY=TRUE</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -5117,20 +5094,15 @@
                     <state>$PROJ_DIR$\..\..\..\..\Components\osal\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\services\saddr</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\phy</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\phy</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\hci</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\host</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\ROM</state>
                     <state>$PROJ_DIR$\..\..\common\cc2540</state>
                     <state>$PROJ_DIR$\..\..\common\npi\npi_np</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Roles\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Roles</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile</state>
                     <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys\CC254x</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys</state>
                     <state>$PROJ_DIR$\..\..\Profiles\OAD</state>
                 </option>
                 <option>
@@ -5393,7 +5365,7 @@
             <archiveVersion>1</archiveVersion>
             <data>
                 <prebuild></prebuild>
-                <postbuild>"$PROJ_DIR$\..\..\common\cc2540\cc254x_ubl_pp.bat" "$PROJ_DIR$" "ProdUBL" "$PROJ_DIR$\CC2540-OAD-ImgA\Exe\SimpleBLEPeripheral.sim"</postbuild>
+                <postbuild>"$PROJ_DIR$\..\..\common\cc2540\cc254x_ubl_pp.bat" "$PROJ_DIR$" "ProdUBL" "$PROJ_DIR$\CC2540-OAD-ImgA\Exe\SimpleBLEPeripheral"</postbuild>
             </data>
         </settings>
         <settings>
@@ -6056,7 +6028,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>C:\Program Files (x86)\IAR Systems\EW8051-10.20.1\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
                 </option>
                 <option>
                     <name>PCReadOnly</name>
@@ -6098,7 +6070,6 @@
                     <state>xPLUS_BROADCASTER</state>
                     <state>HAL_LCD=TRUE</state>
                     <state>HAL_LED=FALSE</state>
-                    <state>HAL_KEY=TRUE</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -6275,20 +6246,15 @@
                     <state>$PROJ_DIR$\..\..\..\..\Components\osal\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\services\saddr</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\phy</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\phy</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\hci</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\host</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\ROM</state>
                     <state>$PROJ_DIR$\..\..\common\cc2540</state>
                     <state>$PROJ_DIR$\..\..\common\npi\npi_np</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Roles\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Roles</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile</state>
                     <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys\CC254x</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys</state>
                     <state>$PROJ_DIR$\..\..\Profiles\OAD</state>
                 </option>
                 <option>
@@ -6551,7 +6517,7 @@
             <archiveVersion>1</archiveVersion>
             <data>
                 <prebuild></prebuild>
-                <postbuild>"$PROJ_DIR$\..\..\common\cc2540\cc254x_ubl_pp.bat" "$PROJ_DIR$" "ProdUBL" "$PROJ_DIR$\CC2540-OAD-ImgB\Exe\SimpleBLEPeripheral.sim"</postbuild>
+                <postbuild>"$PROJ_DIR$\..\..\common\cc2540\cc254x_ubl_pp.bat" "$PROJ_DIR$" "ProdUBL" "$PROJ_DIR$\CC2540-OAD-ImgB\Exe\SimpleBLEPeripheral"</postbuild>
             </data>
         </settings>
         <settings>
@@ -7214,7 +7180,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>C:\Program Files (x86)\IAR Systems\EW8051-10.20.1\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
                 </option>
                 <option>
                     <name>PCReadOnly</name>
@@ -7257,7 +7223,6 @@
                     <state>xPLUS_BROADCASTER</state>
                     <state>HAL_LCD=TRUE</state>
                     <state>HAL_LED=FALSE</state>
-                    <state>HAL_KEY=TRUE</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -7434,20 +7399,15 @@
                     <state>$PROJ_DIR$\..\..\..\..\Components\osal\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\services\saddr</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\phy</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\phy</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\hci</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\host</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\ROM</state>
                     <state>$PROJ_DIR$\..\..\common\cc2540</state>
                     <state>$PROJ_DIR$\..\..\common\npi\npi_np</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Roles\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Roles</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile</state>
                     <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys\CC254x</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys</state>
                     <state>$PROJ_DIR$\..\..\Profiles\OAD</state>
                 </option>
                 <option>
@@ -7710,7 +7670,7 @@
             <archiveVersion>1</archiveVersion>
             <data>
                 <prebuild></prebuild>
-                <postbuild>"$PROJ_DIR$\..\..\common\cc2540\cc254x_ubl_pp.bat" "$PROJ_DIR$" "ProdUBL" "$PROJ_DIR$\CC2540-OAD-Encrypted-ImgA\Exe\SimpleBLEPeripheral.sim"</postbuild>
+                <postbuild>"$PROJ_DIR$\..\..\common\cc2540\cc254x_ubl_pp.bat" "$PROJ_DIR$" "ProdUBL" "$PROJ_DIR$\CC2540-OAD-Encrypted-ImgA\Exe\SimpleBLEPeripheral"</postbuild>
             </data>
         </settings>
         <settings>
@@ -8373,7 +8333,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>C:\Program Files (x86)\IAR Systems\EW8051-10.20.1\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\8051\bin\..\config\devices\Texas Instruments\CC25xx\4x\CC2540F256.i51</state>
                 </option>
                 <option>
                     <name>PCReadOnly</name>
@@ -8416,7 +8376,6 @@
                     <state>xPLUS_BROADCASTER</state>
                     <state>HAL_LCD=TRUE</state>
                     <state>HAL_LED=FALSE</state>
-                    <state>HAL_KEY=TRUE</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -8593,20 +8552,15 @@
                     <state>$PROJ_DIR$\..\..\..\..\Components\osal\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\services\saddr</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\phy</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\phy</state>
+                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\hci</state>
                     <state>$PROJ_DIR$\..\..\..\..\Components\ble\host</state>
-                    <state>$PROJ_DIR$\..\..\..\..\Components\ble\ROM</state>
                     <state>$PROJ_DIR$\..\..\common\cc2540</state>
                     <state>$PROJ_DIR$\..\..\common\npi\npi_np</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Roles\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\Roles</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x</state>
                     <state>$PROJ_DIR$\..\..\Profiles\SimpleProfile</state>
                     <state>$PROJ_DIR$\..\..\Profiles\DevInfo</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys\CC254x</state>
-                    <state>$PROJ_DIR$\..\..\Profiles\Keys</state>
                     <state>$PROJ_DIR$\..\..\Profiles\OAD</state>
                 </option>
                 <option>
@@ -8869,7 +8823,7 @@
             <archiveVersion>1</archiveVersion>
             <data>
                 <prebuild></prebuild>
-                <postbuild>"$PROJ_DIR$\..\..\common\cc2540\cc254x_ubl_pp.bat" "$PROJ_DIR$" "ProdUBL" "$PROJ_DIR$\CC2540-OAD-Encrypted-ImgB\Exe\SimpleBLEPeripheral.sim"</postbuild>
+                <postbuild>"$PROJ_DIR$\..\..\common\cc2540\cc254x_ubl_pp.bat" "$PROJ_DIR$" "ProdUBL" "$PROJ_DIR$\CC2540-OAD-Encrypted-ImgB\Exe\SimpleBLEPeripheral"</postbuild>
             </data>
         </settings>
         <settings>
@@ -9257,22 +9211,28 @@
     <group>
         <name>APP</name>
         <file>
-            <name>$PROJ_DIR$\..\Source\OSAL_VescBLE.c</name>
+            <name>$PROJ_DIR$\..\Source\nus_service.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_ble_bridge.c</name>
+            <name>$PROJ_DIR$\..\Source\nus_service.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_ble_bridge.h</name>
+            <name>$PROJ_DIR$\..\Source\OSAL_vesc_ble.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_Main.c</name>
+            <name>$PROJ_DIR$\..\Source\soft_uart.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_service.c</name>
+            <name>$PROJ_DIR$\..\Source\soft_uart.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\vesc_service.h</name>
+            <name>$PROJ_DIR$\..\Source\vesc_ble.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Source\vesc_ble.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Source\Vesc_Main.c</name>
         </file>
     </group>
     <group>
@@ -9331,6 +9291,78 @@
         <group>
             <name>Target</name>
             <group>
+                <name>CC2540EB</name>
+                <excluded>
+                    <configuration>CC2540DK-MINI Keyfob</configuration>
+                </excluded>
+                <group>
+                    <name>Config</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_board_cfg.h</name>
+                    </file>
+                </group>
+                <group>
+                    <name>Drivers</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_adc.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_aes.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_crc.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_dma.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_flash.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_key.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_lcd.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_led.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_sleep.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_startup.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_timer.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_uart.c</name>
+                    </file>
+                </group>
+                <group>
+                    <name>Includes</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_aes.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_ccm.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_crc.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_dma.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_mcu.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_types.h</name>
+                    </file>
+                </group>
+            </group>
+            <group>
                 <name>CC2540USB</name>
                 <group>
                     <name>Config</name>
@@ -9378,7 +9410,7 @@
                     </file>
                 </group>
                 <group>
-                    <name>Includes</name>
+                    <name>includes</name>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_aes.h</name>
                     </file>
@@ -9393,6 +9425,84 @@
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\hal_types.h</name>
+                    </file>
+                </group>
+                <group>
+                    <name>USB</name>
+                    <group>
+                        <name>class_cdc</name>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc.h</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc_descriptor.s51</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc_hooks.c</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc_hooks.h</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_firmware_library_config.c</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_firmware_library_config.h</name>
+                        </file>
+                        <file>
+                            <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_firmware_library_headers.h</name>
+                        </file>
+                    </group>
+                    <group>
+                        <name>library</name>
+                        <group>
+                            <name>cc2540</name>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\cc2540\usb_board_cfg.h</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\cc2540\usb_interrupt.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\cc2540\usb_suspend.c</name>
+                            </file>
+                        </group>
+                        <group>
+                            <name>usb</name>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_descriptor_parser.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_descriptor_parser.h</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_framework.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_framework_structs.h</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_interrupt.h</name>
+                            </file>
+                        </group>
+                    </group>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_descriptor.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_framework.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_reg.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_standard_requests.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_standard_requests.h</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_suspend.h</name>
                     </file>
                 </group>
             </group>
@@ -9422,13 +9532,13 @@
             <name>$PROJ_DIR$\..\..\..\..\Components\ble\host\linkdb.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include\ll.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include\ll.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\common\npi\npi_np\npi.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\Components\ble\controller\CC254x\include\phy.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Components\ble\controller\include\phy.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\Components\ble\include\sm.h</name>
@@ -9532,9 +9642,6 @@
             <name>$PROJ_DIR$\..\..\Include\gattservapp.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\GATT\gattservapp_util.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\Profiles\OAD\oad.h</name>
             <excluded>
                 <configuration>CC2540DK-MINI Keyfob</configuration>
@@ -9562,10 +9669,10 @@
             </excluded>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\Roles\CC254x\peripheral.c</name>
+            <name>$PROJ_DIR$\..\..\Profiles\Roles\peripheral.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\Roles\CC254x\peripheral.h</name>
+            <name>$PROJ_DIR$\..\..\Profiles\Roles\peripheral.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\Profiles\Roles\peripheralBroadcaster.c</name>
@@ -9594,13 +9701,21 @@
             </excluded>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\SimpleProfile\CC254x\simpleGATTprofile.c</name>
+            <name>$PROJ_DIR$\..\..\Profiles\SimpleProfile\simpleGATTprofile.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\Profiles\SimpleProfile\simpleGATTprofile.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\Profiles\Keys\CC254x\simplekeys.c</name>
+            <name>$PROJ_DIR$\..\..\Profiles\Keys\simplekeys.c</name>
+            <excluded>
+                <configuration>CC2540</configuration>
+                <configuration>CC2540F128</configuration>
+                <configuration>CC2540-OAD-ImgA</configuration>
+                <configuration>CC2540-OAD-ImgB</configuration>
+                <configuration>CC2540-OAD-Encrypted-ImgA</configuration>
+                <configuration>CC2540-OAD-Encrypted-ImgB</configuration>
+            </excluded>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\Profiles\Keys\simplekeys.h</name>
@@ -9621,9 +9736,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\buildConfig.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\f8wConfig.cfg</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\common\cc2540\OnBoard.c</name>

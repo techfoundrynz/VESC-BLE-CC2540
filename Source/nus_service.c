@@ -267,7 +267,7 @@ bStatus_t NUS_SetParameter(uint8 param, uint8 len, void *value)
                 nusTxDataLen = len;
                 
                 // Send notification if enabled
-                GATTServApp_ProcessCharCfg(nusTxCharConfig, nusTxCharValue,
+                ret = GATTServApp_ProcessCharCfg(nusTxCharConfig, nusTxCharValue,
                                           FALSE, nusAttrTbl, 
                                           GATT_NUM_ATTRS(nusAttrTbl),
                                           INVALID_TASK_ID);

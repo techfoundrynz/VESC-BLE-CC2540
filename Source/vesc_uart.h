@@ -26,12 +26,12 @@ extern "C"
 
 // UART Selection (0 or 1)
 #ifndef VESC_UART_PORT
-#define VESC_UART_PORT  1
+#define VESC_UART_PORT  0
 #endif
 
 // UART Alternate Location (1 or 2)
 #ifndef VESC_UART_ALT
-#define VESC_UART_ALT   2
+#define VESC_UART_ALT   1
 #endif
 
 /*********************************************************************
@@ -47,8 +47,9 @@ typedef void (*vescUartCB_t)(void);
 // API moved to Hardware UART logic
 void VescUART_Init(vescUartCB_t callback);
 void VescUART_Write(uint8 *buf, uint8 len);
-uint8 VescUART_RxBufLen(void);
-uint8 VescUART_Read(uint8 *buf, uint8 maxLen);
+uint16 VescUART_RxBufLen(void);
+uint16 VescUART_Read(uint8 *buf, uint16 maxLen);
+void VescUART_Poll(void);
 
 #ifdef __cplusplus
 }

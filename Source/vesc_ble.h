@@ -26,6 +26,7 @@ extern "C"
 #define VESC_BLE_START_DEVICE_EVT     0x0001
 
 #define VESC_BLE_UART_RX_EVT          0x0004
+#define VESC_BLE_POLL_UART_EVT        0x0008
 
 /*********************************************************************
  * MACROS

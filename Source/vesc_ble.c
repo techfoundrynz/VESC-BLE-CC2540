@@ -28,7 +28,7 @@
  * CONSTANTS
  */
 
-#define DEVICE_NAME                     "VESC BLE UART"
+#define DEVICE_NAME                     "FMFree GT"
 #define DEFAULT_ADVERTISING_INTERVAL    64
 #define DEFAULT_DESIRED_MIN_CONN_INTERVAL     8
 #define DEFAULT_DESIRED_MAX_CONN_INTERVAL     16
@@ -38,7 +38,6 @@
 
 
 #define BLE_MAX_DATA_LEN                20
-#define UART_RX_BUF_SIZE                256
 
 /*********************************************************************
  * GLOBAL VARIABLES
@@ -65,7 +64,8 @@ static uint8 advertData[] =
 
 static uint8 attDeviceName[GAP_DEVICE_NAME_LEN] = "VESC BLE UART";
 
-static uint8 uartRxBuf[UART_RX_BUF_SIZE];
+static uint8 txRetryBuf[BLE_MAX_DATA_LEN];
+static uint8 txRetryLen = 0;
 
 static bool bleConnected = FALSE;
 
@@ -192,9 +192,16 @@ void VESC_BLE_Init(uint8 task_id)
     // Initialize Hardware UART on P1.6/P1.7
     VescUART_Init(vescUartCallback);
     
-    //HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT);
+    // Prevent BLE Stack from disabling interrupts during Radio Events
+    // This fixes UART ISR starvation at high baud rates!
+    // 0 = HCI_EXT_HALT_DURING_RF_DISABLE
+    extern hciStatus_t HCI_EXT_HaltDuringRfCmd( uint8 mode );
+    HCI_EXT_HaltDuringRfCmd(0);
     
     osal_set_event(vesc_ble_TaskID, VESC_BLE_START_DEVICE_EVT);
+    
+    // Start UART Polling
+    osal_start_timerEx(vesc_ble_TaskID, VESC_BLE_POLL_UART_EVT, 100);
 }
 
 uint16 VESC_BLE_ProcessEvent(uint8 task_id, uint16 events)
@@ -228,46 +235,61 @@ uint16 VESC_BLE_ProcessEvent(uint8 task_id, uint16 events)
     
     if (events & VESC_BLE_UART_RX_EVT)
     {
-        // Process any pending UART data
-        // Read "all" available bytes up to our buffer size, similar to ESP32 approach
-        uint8 len = VescUART_RxBufLen();
-        
-        if (bleConnected && len > 0)
+        // 1. Try to send pending packet from retry buffer
+        if (bleConnected && txRetryLen > 0)
         {
-            // Cap at buffer size
-            if (len > BLE_MAX_DATA_LEN)
-               len = BLE_MAX_DATA_LEN;
-            
-            // Read everything available into local buffer
-            uint8 readLen = VescUART_Read(uartRxBuf, len);
-            
-            if (readLen > 0)
+            if (NUS_SetParameter(NUS_TX_DATA, txRetryLen, txRetryBuf) == SUCCESS)
             {
-                uint8 remaining = readLen;
-                uint8 packetIndex = 0;
-                
-                while (remaining > 0)
-                {
-                    uint8 packetSize = (remaining < BLE_MAX_DATA_LEN) ? remaining : BLE_MAX_DATA_LEN;
-                    
-                    // Send this chunk
-                    // Note: NUS_SetParameter copies the data, so we can pass pointer to offset
-                    NUS_SetParameter(NUS_TX_DATA, packetSize, &uartRxBuf[packetIndex]);
-                    
-                    remaining -= packetSize;
-                    packetIndex += packetSize;
-                }
+                txRetryLen = 0; // Sent successfully
             }
-            
-            // Check if there is MORE data remaining in ring buffer (if we filled our buffer)
-            if (VescUART_RxBufLen() > 0)
+            else
             {
-                // Re-schedule event immediately to process next chunk
+                // Still failed/busy. Reschedule and return to give stack time to process.
                 osal_set_event(vesc_ble_TaskID, VESC_BLE_UART_RX_EVT);
+                return (events ^ VESC_BLE_UART_RX_EVT);
+            }
+        }
+        
+        // 2. Loop to process new data from UART
+        if (bleConnected) 
+        {
+            // Loop as long as we have data in UART buffer
+            while (VescUART_RxBufLen() > 0)
+            {
+                 // Read into retry buffer
+                 uint8 avail = VescUART_RxBufLen();
+                 if (avail > BLE_MAX_DATA_LEN) avail = BLE_MAX_DATA_LEN;
+                 
+                 // Read data from UART
+                 txRetryLen = VescUART_Read(txRetryBuf, avail);
+                 
+                 // Try to send
+                 if (NUS_SetParameter(NUS_TX_DATA, txRetryLen, txRetryBuf) == SUCCESS)
+                 {
+                     txRetryLen = 0; // Success, clear buffer and continue loop
+                 }
+                 else
+                 {
+                     // Failed (likely Buffer Full). 
+                     // Data remains in txRetryBuf for next event.
+                     osal_set_event(vesc_ble_TaskID, VESC_BLE_UART_RX_EVT);
+                     break; // Exit loop, yield to OSAL
+                 }
             }
         }
         
         return (events ^ VESC_BLE_UART_RX_EVT);
+    }
+
+    if (events & VESC_BLE_POLL_UART_EVT)
+    {
+        // Poll UART buffer for data
+        VescUART_Poll();
+        
+        // Re-schedule poll
+        osal_start_timerEx(vesc_ble_TaskID, VESC_BLE_POLL_UART_EVT, 10);
+        
+        return (events ^ VESC_BLE_POLL_UART_EVT);
     }
     
     return 0;

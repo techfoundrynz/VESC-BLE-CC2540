@@ -1,16 +1,7 @@
-/**
- * @file    vesc_uart.c
- * @brief   Hardware UART implementation for CC2540 (replacing SoftUART)
- *          Uses USART1 Alt 2:
- *          TX = P1.6
- *          RX = P1.7
- * 
- * @note    API names kept as VescUART_xxx to minimize changes in main app.
- */
-
 #include "hal_mcu.h"
 #include "hal_types.h"
 #include "OSAL.h"
+#include "hal_uart.h"
 #include "vesc_uart.h"
 
 /*********************************************************************
@@ -27,80 +18,27 @@
  * UART1 Alt 2: P1.7 (RX), P1.6 (TX)
  */
 
+// Define which UART port to use based on VESC_UART_PORT
 #if (VESC_UART_PORT == 0)
-    // UART 0
-    #define UXCSR           U0CSR
-    #define UXUCR           U0UCR
-    #define UXDBUF          U0DBUF
-    #define UXBAUD          U0BAUD
-    #define UXGCR           U0GCR
-    #define URXIF           URX0IF
-    #define URXIE           URX0IE
-    #define URX_VECTOR      URX0_VECTOR
-    #define PERCFG_UART_BIT 0x01
-    
-    #if (VESC_UART_ALT == 1)
-        #define PIN_RX          2
-        #define PIN_TX          3
-        #define PIN_SEL         P0SEL
-        #define PIN_DIR         P0DIR
-        #define PERCFG_ALT_BIT  0x00 // Alt 1 = 0
-    #else
-        #define PIN_RX          4
-        #define PIN_TX          5
-        #define PIN_SEL         P1SEL
-        #define PIN_DIR         P1DIR
-        #define PERCFG_ALT_BIT  0x02 // Alt 2 = 1 (Bit 1 of PERCFG for UART0 ?? No check datasheet!)
-        // CC254x Datasheet:
-        // UART0 Alt 1: PERCFG.U0CFG = 0
-        // UART0 Alt 2: PERCFG.U0CFG = 1 (Bit 0)
-        #undef PERCFG_ALT_BIT
-        #define PERCFG_ALT_BIT  0x01
-    #endif
-
+  #define HAL_UART_PORT_USED HAL_UART_PORT_0
 #else
-    // UART 1
-    #define UXCSR           U1CSR
-    #define UXUCR           U1UCR
-    #define UXDBUF          U1DBUF
-    #define UXBAUD          U1BAUD
-    #define UXGCR           U1GCR
-    #define URXIF           URX1IF
-    #define URXIE           URX1IE
-    #define URX_VECTOR      URX1_VECTOR
-    
-    #if (VESC_UART_ALT == 1)
-        #define PIN_RX          5
-        #define PIN_TX          4
-        #define PIN_SEL         P0SEL
-        #define PIN_DIR         P0DIR
-        #define PERCFG_ALT_BIT  0x00 // Alt 1 = 0
-    #else
-        #define PIN_RX          7
-        #define PIN_TX          6
-        #define PIN_SEL         P1SEL
-        #define PIN_DIR         P1DIR
-        #define PERCFG_ALT_BIT  0x02 // Alt 2 = 1 (Bit 1 of PERCFG for UART1)
-    #endif
-
+  #define HAL_UART_PORT_USED HAL_UART_PORT_1
 #endif
-
-// Baud Rate Generation for 32 MHz Clock
-// 115200: M=216, E=11
-#define BAUD_M_115200   216
-#define BAUD_E_115200   11
 
 /*********************************************************************
  * LOCAL VARIABLES
  */
 
 static uint8 rxBuffer[VESC_UART_RX_BUF_SIZE];
-static volatile uint8 rxHead = 0;
-static volatile uint8 rxTail = 0;
+static volatile uint16 rxHead = 0;
+static volatile uint16 rxTail = 0;
 
 static vescUartCB_t appCallback = NULL;
 
-static void VescUART_TxByte(uint8 byte);
+/*********************************************************************
+ * LOCAL FUNCTIONS
+ */
+static void uartCallback(uint8 port, uint8 event);
 
 /*********************************************************************
  * PUBLIC FUNCTIONS
@@ -108,10 +46,12 @@ static void VescUART_TxByte(uint8 byte);
 
 /**
  * @fn      VescUART_Init
- * @brief   Initialize Hardware UART
+ * @brief   Initialize UART using TI HAL Driver
  */
 void VescUART_Init(vescUartCB_t callback)
 {
+    halUARTCfg_t uartConfig;
+
     // Store callback
     appCallback = callback;
     
@@ -119,55 +59,27 @@ void VescUART_Init(vescUartCB_t callback)
     rxHead = 0;
     rxTail = 0;
 
-    // 1. Configure Pins for Peripheral function
-    PIN_SEL |= (BV(PIN_RX) | BV(PIN_TX));
+    // Configure HAL UART
+    uartConfig.configured           = TRUE;
+    uartConfig.baudRate             = HAL_UART_BR_115200;
+    uartConfig.flowControl          = FALSE;
+    uartConfig.flowControlThreshold = 48; // Recommended: 48
+    uartConfig.rx.maxBufSize        = 128; // Driver internal buffer
+    uartConfig.tx.maxBufSize        = 128; // Driver internal buffer
+    uartConfig.idleTimeout          = 6;   // ~6ms timeout
+    uartConfig.intEnable            = TRUE;
+    uartConfig.callBackFunc         = uartCallback;
     
-    // 2. Configure Pin Direction (optional, handled by peripheral usually)
-    
-    // 3. Configure UART Priority/Alt Location
-    // Set proper bit in PERCFG
-    if (PERCFG_ALT_BIT)
-        PERCFG |= PERCFG_ALT_BIT;
-    else
-        PERCFG &= ~PERCFG_ALT_BIT; // Assuming we know the bit mask is correct for the port
-        
-    // Note on PERCFG:
-    // Bit 0: UART0 Alt location (0=Alt1, 1=Alt2)
-    // Bit 1: UART1 Alt location (0=Alt1, 1=Alt2)
-    // Our MACRO logic above handles the specific bit value to set.
-    
-    // 4. Configure P2SEL (Priority) - Omitted for simplicity, usually defaults are fine.
-
-    // 5. Configure USART Control
-    // CSR.MODE = 1 (UART)
-    // CSR.RE = 1 (Receiver Enable)
-    UXCSR = 0x80 | 0x40; 
-    
-    // 6. Configure UART Control
-    // UCR.FLUSH = 1
-    // UCR.STOP = 1 (High)
-    // UCR.START = 0 (Low)
-    UXUCR = BV(7); // Flush
-    UXUCR = BV(1); // 8N1, Stop High
-    
-    // 7. Baud Rate
-    UXBAUD = BAUD_M_115200;
-    UXGCR = (UXGCR & 0xE0) | BAUD_E_115200;
-    
-    // 8. Interrupts
-    URXIF = 0;
-    URXIE = 1;
+    HalUARTOpen(HAL_UART_PORT_USED, &uartConfig);
 }
 
 /**
  * @fn      VescUART_TxByte
- * @brief   Transmit one byte using Hardware UART
+ * @brief   Transmit one byte (Helper)
  */
 static void VescUART_TxByte(uint8 byte)
 {
-    UXDBUF = byte;
-    while (!(UXCSR & 0x02)); // Wait for TX_BYTE (Bit 1)
-    UXCSR &= ~0x02;          // Clear TX_BYTE
+    HalUARTWrite(HAL_UART_PORT_USED, &byte, 1);
 }
 
 /**
@@ -176,22 +88,17 @@ static void VescUART_TxByte(uint8 byte)
  */
 void VescUART_Write(uint8 *buf, uint8 len)
 {
-    uint8 i;
-    for (i = 0; i < len; i++)
-    {
-        VescUART_TxByte(buf[i]);
-    }
+    HalUARTWrite(HAL_UART_PORT_USED, buf, len);
 }
-
 
 /**
  * @fn      VescUART_RxBufLen
  * @brief   Get number of bytes in RX buffer
  */
-uint8 VescUART_RxBufLen(void)
+uint16 VescUART_RxBufLen(void)
 {
-    uint8 head = rxHead;  // Read volatile once
-    uint8 tail = rxTail;  // Read volatile once
+    uint16 head = rxHead;  // Volatile read
+    uint16 tail = rxTail;  // Volatile read
     
     if (head >= tail)
         return (head - tail);
@@ -203,11 +110,10 @@ uint8 VescUART_RxBufLen(void)
  * @fn      VescUART_Read
  * @brief   Read from RX buffer
  */
-
-uint8 VescUART_Read(uint8 *buf, uint8 maxLen)
+uint16 VescUART_Read(uint8 *buf, uint16 maxLen)
 {
-    uint8 count = 0;
-    uint8 head = rxHead;  // Read volatile once
+    uint16 count = 0;
+    uint16 head = rxHead; // Volatile read
     
     while (rxTail != head && count < maxLen)
     {
@@ -219,24 +125,52 @@ uint8 VescUART_Read(uint8 *buf, uint8 maxLen)
 }
 
 /**
- * @brief   UART RX Interrupt Service Routine
+ * @fn      VescUART_Poll
+ * @brief   Polls - In HAL mode, this just triggers callback if data available
  */
-#pragma vector = URX_VECTOR
-__interrupt void uartRxIsr(void)
+void VescUART_Poll(void)
 {
-    URXIF = 0; // Clear interrupt flag
-    
-    uint8 byte = UXDBUF;
-    
-    uint8 nextHead = (rxHead + 1) % VESC_UART_RX_BUF_SIZE;
-    if (nextHead != rxTail)
+    // Check if we need to manually pull from HAL driver (usually callback handles it)
+    // But we can trigger the app callback if we have data.
+    if (rxHead != rxTail)
     {
-        rxBuffer[rxHead] = byte;
-        rxHead = nextHead;
-        
         if (appCallback)
         {
             appCallback();
         }
+    }
+}
+
+/**
+ * @fn      uartCallback
+ * @brief   TI HAL UART Callback
+ */
+static void uartCallback(uint8 port, uint8 event)
+{
+    // Read available bytes from driver into our circular buffer
+    uint16 len = Hal_UART_RxBufLen(port);
+    uint8 tempBuf[32]; // Temporary chunk buffer
+    
+    while (len > 0)
+    {
+        // Read chunk
+        uint16 toRead = (len > sizeof(tempBuf)) ? sizeof(tempBuf) : len;
+        uint16 read = HalUARTRead(port, tempBuf, toRead);
+        
+        // Push to circular buffer
+        for (uint16 i = 0; i < read; i++)
+        {
+            uint16 nextHead = (rxHead + 1) % VESC_UART_RX_BUF_SIZE;
+            if (nextHead != rxTail)
+            {
+                rxBuffer[rxHead] = tempBuf[i];
+                rxHead = nextHead;
+            }
+        }
+        
+        len -= read;
+        
+        // Refresh len if more arrived
+        if (len == 0) len = Hal_UART_RxBufLen(port);
     }
 }

@@ -39,4 +39,4 @@ vesc_ble.pbi: \
   C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\ble\include/sm.h \
   C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source/vesc_ble.h \
   C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source/nus_service.h \
-  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source/soft_uart.h
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source/vesc_uart.h

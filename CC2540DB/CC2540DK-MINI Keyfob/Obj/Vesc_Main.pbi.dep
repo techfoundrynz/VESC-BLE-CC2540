@@ -1,5 +1,5 @@
-Vesc_Main.pbi: \
-  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source\Vesc_Main.c \
+vesc_main.pbi: \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source\vesc_main.c \
   C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\hal_types.h \
   C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\include\hal_key.h \
   C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\include/hal_board.h \

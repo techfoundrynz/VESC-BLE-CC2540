@@ -22,9 +22,9 @@ rule browsedata
 #Build steps
 build nus_service.pbi : index nus_service.xcl
 build OSAL_vesc_ble.pbi : index OSAL_vesc_ble.xcl
-build soft_uart.pbi : index soft_uart.xcl
 build vesc_ble.pbi : index vesc_ble.xcl
-build Vesc_Main.pbi : index Vesc_Main.xcl
+build vesc_main.pbi : index vesc_main.xcl
+build vesc_uart.pbi : index vesc_uart.xcl
 build hal_drivers.pbi : index hal_drivers.xcl
 build hal_adc.pbi : index hal_adc.xcl
 build hal_aes.pbi : index hal_aes.xcl
@@ -62,7 +62,7 @@ build peripheral.pbi : index peripheral.xcl
 build simpleGATTprofile.pbi : index simpleGATTprofile.xcl
 build simplekeys.pbi : index simplekeys.xcl
 build OnBoard.pbi : index OnBoard.xcl
-build vesc_BLE_part0.pbi : link nus_service.pbi OSAL_vesc_ble.pbi soft_uart.pbi vesc_ble.pbi Vesc_Main.pbi hal_drivers.pbi
+build vesc_BLE_part0.pbi : link nus_service.pbi OSAL_vesc_ble.pbi vesc_ble.pbi vesc_main.pbi vesc_uart.pbi hal_drivers.pbi
 build vesc_BLE_part1.pbi : link hal_adc.pbi hal_aes.pbi hal_crc.pbi hal_dma.pbi hal_flash.pbi hal_key.pbi
 build vesc_BLE_part2.pbi : link hal_lcd.pbi hal_led.pbi hal_sleep.pbi hal_startup.pbi hal_timer.pbi hal_uart.pbi
 build vesc_BLE_part3.pbi : link usb_cdc_hooks.pbi usb_firmware_library_config.pbi usb_interrupt.pbi usb_suspend.pbi usb_descriptor_parser.pbi usb_framework.pbi

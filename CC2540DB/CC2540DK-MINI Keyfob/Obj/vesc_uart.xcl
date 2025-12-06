@@ -1,12 +1,12 @@
-"C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source\soft_uart.c"
+"C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source\vesc_uart.c"
 -std=c99
 -ferror-limit=0
 -fbracket-depth=512
 -MD
 -MF
-C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\CC2540DK-MINI Keyfob\Obj\soft_uart.pbi.dep
+C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\CC2540DK-MINI Keyfob\Obj\vesc_uart.pbi.dep
 -o
-soft_uart.pbi
+vesc_uart.pbi
 -I
 C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source
 -I

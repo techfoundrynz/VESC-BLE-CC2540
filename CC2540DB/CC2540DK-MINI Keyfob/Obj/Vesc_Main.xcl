@@ -1,12 +1,12 @@
-"C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source\Vesc_Main.c"
+"C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source\vesc_main.c"
 -std=c99
 -ferror-limit=0
 -fbracket-depth=512
 -MD
 -MF
-C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\CC2540DK-MINI Keyfob\Obj\Vesc_Main.pbi.dep
+C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\CC2540DK-MINI Keyfob\Obj\vesc_main.pbi.dep
 -o
-Vesc_Main.pbi
+vesc_main.pbi
 -I
 C:\Texas Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\Source
 -I

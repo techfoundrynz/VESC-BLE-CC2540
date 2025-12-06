@@ -12,4 +12,18 @@ hal_uart.pbi: \
   C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\include\hal_drivers.h \
   C:\Texas\ Instruments\BLE-CC254x-1.4.0\Components\hal\target\CC2540USB\hal_types.h \
   C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\include\hal_uart.h \
-  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\include/hal_board.h
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\include/hal_board.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Components\hal\target\CC2540USB/_hal_uart_usb.c \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_cdc_hooks.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_firmware_library_config.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc\usb_firmware_library_headers.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\class_cdc/usb_firmware_library_config.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_descriptor.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_framework_structs.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_descriptor_parser.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb\usb_interrupt.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb/usb_framework_structs.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_framework.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_standard_requests.h \
+  C:\Texas\ Instruments\BLE-CC254x-1.4.0\Projects\ble\VESC_BLE\CC2540DB\..\..\..\..\Components\hal\target\CC2540USB\usb\library\usb_suspend.h

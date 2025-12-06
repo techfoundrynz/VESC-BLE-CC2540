@@ -8629,19 +8629,19 @@
             <name>$PROJ_DIR$\..\Source\OSAL_vesc_ble.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\soft_uart.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Source\soft_uart.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Source\vesc_ble.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Source\vesc_ble.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\Vesc_Main.c</name>
+            <name>$PROJ_DIR$\..\Source\vesc_main.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Source\vesc_uart.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Source\vesc_uart.h</name>
         </file>
     </group>
     <group>
